@@ -54,6 +54,10 @@ let coupon = store.load("khay-coupon", null);
 let activeFilter = "all";
 let searchTerm = "";
 let sortMode = "featured";
+let recent = store.load("khay-recent", []);       // [id], le plus récent en premier
+const PRICE_CEIL = Math.ceil(Math.max(...PRODUCTS.map((p) => p.price)) / 1000) * 1000;
+let maxPrice = PRICE_CEIL;
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- Utilitaires ---------- */
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -106,7 +110,7 @@ function visibleProducts() {
   let list = PRODUCTS.filter((p) => {
     const matchFilter = activeFilter === "all" || p.cat === activeFilter || (activeFilter === "promo" && p.old);
     const matchSearch = p.name.toLowerCase().includes(searchTerm) || p.cat.includes(searchTerm);
-    return matchFilter && matchSearch;
+    return matchFilter && matchSearch && p.price <= maxPrice;
   });
   if (sortMode === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
   if (sortMode === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
@@ -146,6 +150,8 @@ function renderProducts() {
 
 function openQuickView(id) {
   const p = findProduct(id);
+  addToRecent(id);
+  const similar = PRODUCTS.filter((x) => x.cat === p.cat && x.id !== p.id).slice(0, 3);
   $("#productModalContent").innerHTML = `
     <div class="quickview">
       <div class="quickview__media" style="background:${p.bg}">${visual(p)}</div>
@@ -160,13 +166,29 @@ function openQuickView(id) {
           <button class="btn btn--primary" id="qvAdd">Ajouter au panier</button>
         </div>
       </div>
-    </div>`;
+    </div>
+    ${similar.length ? `
+    <div class="similar">
+      <h4>Vous aimerez aussi</h4>
+      <div class="similar__list">
+        ${similar.map((x) => `
+          <button class="mini" data-view="${x.id}">
+            <span class="mini__img" style="background:${x.bg}">${visual(x)}</span>
+            <span class="mini__name">${x.name}</span>
+            <span class="mini__price">${money(x.price)}</span>
+          </button>`).join("")}
+      </div>
+    </div>` : ""}`;
+  $("#productModal .modal__box").scrollTop = 0;
   let qty = 1;
   $$("[data-qv]").forEach((b) => b.addEventListener("click", () => {
     qty = Math.max(1, qty + Number(b.dataset.qv));
     $("#qvQty").textContent = qty;
   }));
-  $("#qvAdd").addEventListener("click", () => { addToCart(p.id, qty); closeAll(); });
+  $("#qvAdd").addEventListener("click", () => {
+    addToCart(p.id, qty, $(".quickview__media"));
+    closeAll();
+  });
   openPanel("#productModal");
 }
 
@@ -197,11 +219,57 @@ function renderWishlist() {
     : `<div class="drawer__empty"><span>🤍</span>Aucun favori pour le moment.</div>`;
 }
 
+/* ---------- Vus récemment ---------- */
+function addToRecent(id) {
+  recent = [id, ...recent.filter((r) => r !== id)].slice(0, 6);
+  store.save("khay-recent", recent);
+  renderRecent();
+}
+
+function renderRecent() {
+  const items = recent.map(findProduct).filter(Boolean);
+  $("#recent").hidden = !items.length;
+  $("#recentList").innerHTML = items.map((p) => `
+    <button class="mini" data-view="${p.id}">
+      <span class="mini__img" style="background:${p.bg}">${visual(p)}</span>
+      <span class="mini__name">${p.name}</span>
+      <span class="mini__price">${money(p.price)}</span>
+    </button>`).join("");
+}
+
+/* ---------- Animation « vers le panier » ---------- */
+function flyToCart(sourceEl) {
+  const target = $("#cartBtn");
+  if (!sourceEl || reduceMotion || !sourceEl.animate) return bump(target);
+  const from = sourceEl.getBoundingClientRect();
+  const to = target.getBoundingClientRect();
+  const size = Math.min(from.width, from.height, 140);
+  const ghost = document.createElement("div");
+  ghost.className = "fly";
+  ghost.innerHTML = sourceEl.innerHTML;
+  Object.assign(ghost.style, {
+    width: `${size}px`, height: `${size}px`, fontSize: `${size * 0.6}px`,
+    left: `${from.left + from.width / 2 - size / 2}px`, top: `${from.top + from.height / 2 - size / 2}px`,
+  });
+  document.body.appendChild(ghost);
+  const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+  const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+  ghost.animate([
+    { transform: "translate(0, 0) scale(1)", opacity: 1 },
+    { transform: `translate(${dx * 0.5}px, ${dy - 80}px) scale(.6)`, opacity: 1, offset: 0.6 },
+    { transform: `translate(${dx}px, ${dy}px) scale(.15)`, opacity: .4 },
+  ], { duration: 750, easing: "cubic-bezier(.5,0,.3,1)" }).onfinish = () => {
+    ghost.remove();
+    target.animate([{ transform: "scale(1)" }, { transform: "scale(1.3) rotate(-10deg)" }, { transform: "scale(1)" }], { duration: 400 });
+  };
+}
+
 /* ---------- Panier ---------- */
-function addToCart(id, qty = 1) {
+function addToCart(id, qty = 1, sourceEl) {
   const line = cart.find((l) => l.id === id);
   if (line) line.qty += qty; else cart.push({ id, qty });
   saveCart();
+  flyToCart(sourceEl);
   toast(`🛍️ ${findProduct(id).name} ajouté au panier`);
 }
 
@@ -310,6 +378,7 @@ function submitOrder(e) {
       Nous vous contacterons au ${data.phone} pour confirmer la livraison.</p>
       <button class="btn btn--primary" data-close>Continuer mes achats</button>
     </div>`;
+  confetti();
 
   cart = [];
   coupon = null;
@@ -323,6 +392,27 @@ function submitOrder(e) {
     $("#checkoutForm").addEventListener("submit", submitOrder);
     $("#checkoutModal").removeEventListener("transitionend", restore);
   });
+}
+
+/* ---------- Confettis ---------- */
+function confetti() {
+  if (reduceMotion) return;
+  const colors = ["#c8553d", "#e4a24a", "#2d4a3e", "#d17a9a", "#4f7a65", "#f4c7a1"];
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement("span");
+    c.className = "confetti";
+    c.style.left = `${Math.random() * 100}vw`;
+    c.style.background = colors[i % colors.length];
+    c.style.width = `${6 + Math.random() * 6}px`;
+    c.style.height = `${10 + Math.random() * 8}px`;
+    document.body.appendChild(c);
+    const drift = (Math.random() - 0.5) * 300;
+    c.animate([
+      { transform: "translate(0, -20px) rotate(0)", opacity: 1 },
+      { transform: `translate(${drift}px, 105vh) rotate(${Math.random() * 1080}deg)`, opacity: .8 },
+    ], { duration: 2200 + Math.random() * 1800, delay: Math.random() * 300, easing: "cubic-bezier(.25,.6,.4,1)" })
+      .onfinish = () => c.remove();
+  }
 }
 
 /* ---------- Panneaux (tiroirs / modales) ---------- */
@@ -357,6 +447,97 @@ function startCountdown() {
   setInterval(tick, 1000);
 }
 
+/* ---------- Recherche avec suggestions ---------- */
+function renderSuggestions() {
+  const box = $("#suggest");
+  if (!searchTerm) { box.hidden = true; return; }
+  const hits = PRODUCTS.filter((p) => p.name.toLowerCase().includes(searchTerm)).slice(0, 5);
+  box.innerHTML = hits.length
+    ? hits.map((p) => `
+        <button class="suggest__item" data-view="${p.id}">
+          <span class="mini__img" style="background:${p.bg}">${visual(p)}</span>
+          <span>${p.name.replace(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "i"), "<mark>$1</mark>")}</span>
+          <strong>${money(p.price)}</strong>
+        </button>`).join("")
+    : `<p class="suggest__empty">Aucun résultat pour « ${searchTerm.replace(/</g, "&lt;")} »</p>`;
+  box.hidden = false;
+}
+
+/* ---------- Filtre par prix ---------- */
+function setupPriceFilter() {
+  const range = $("#priceRange");
+  range.min = 0;
+  range.max = PRICE_CEIL;
+  range.value = maxPrice;
+  const update = () => {
+    maxPrice = Number(range.value);
+    $("#priceValue").textContent = money(maxPrice);
+    range.style.setProperty("--fill", `${(maxPrice / PRICE_CEIL) * 100}%`);
+  };
+  update();
+  range.addEventListener("input", () => { update(); renderProducts(); });
+}
+
+function resetFilters() {
+  searchTerm = "";
+  $("#searchInput").value = "";
+  $("#priceRange").value = PRICE_CEIL;
+  $("#priceRange").dispatchEvent(new Event("input"));
+  setFilter("all");
+}
+
+/* ---------- Thème clair / sombre ---------- */
+function setupTheme() {
+  const root = document.documentElement;
+  const current = () => root.dataset.theme
+    || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  $("#themeBtn").addEventListener("click", () => {
+    const next = current() === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    store.save("khay-theme", next);
+  });
+}
+
+/* ---------- Effet 3D sur les cartes ---------- */
+function setupTilt() {
+  if (reduceMotion || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  const grid = $("#productsGrid");
+  grid.addEventListener("pointermove", (e) => {
+    const card = e.target.closest(".card");
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.setProperty("--ry", `${x * 10}deg`);
+    card.style.setProperty("--rx", `${-y * 10}deg`);
+  });
+  grid.addEventListener("pointerout", (e) => {
+    const card = e.target.closest(".card");
+    if (card && !card.contains(e.relatedTarget)) {
+      card.style.setProperty("--rx", "0deg");
+      card.style.setProperty("--ry", "0deg");
+    }
+  });
+}
+
+/* ---------- Compteurs animés ---------- */
+function animateCounters() {
+  $$("[data-count]").forEach((el) => {
+    const end = Number(el.dataset.count);
+    const decimals = Number(el.dataset.decimals || 0);
+    const suffix = el.dataset.suffix || "";
+    const format = (v) => v.toLocaleString("fr-FR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+    if (reduceMotion) { el.textContent = format(end); return; }
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / 1600);
+      el.textContent = format(end * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
 /* ---------- Animations au défilement ---------- */
 function setupReveal() {
   if (!("IntersectionObserver" in window)) {
@@ -377,9 +558,9 @@ document.addEventListener("click", (e) => {
   if (!t) return;
   const d = t.dataset;
 
-  if (d.add) addToCart(Number(d.add));
+  if (d.add) addToCart(Number(d.add), 1, t.closest(".card")?.querySelector(".card__visual") || t.closest(".line")?.querySelector(".line__img"));
   else if (d.wish) toggleWishlist(Number(d.wish));
-  else if (d.view) openQuickView(Number(d.view));
+  else if (d.view) { $("#suggest").hidden = true; openQuickView(Number(d.view)); }
   else if (d.inc) changeQty(Number(d.inc), 1);
   else if (d.dec) changeQty(Number(d.dec), -1);
   else if (d.remove) removeFromCart(Number(d.remove));
@@ -395,7 +576,17 @@ $("#overlay").addEventListener("click", closeAll);
 $("#checkoutBtn").addEventListener("click", openCheckout);
 $("#checkoutForm").addEventListener("submit", submitOrder);
 $$(".modal").forEach((m) => m.addEventListener("click", (e) => { if (e.target === m) closeAll(); }));
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAll(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { closeAll(); $("#suggest").hidden = true; }
+  // Raccourci « / » pour rechercher
+  if (e.key === "/" && !e.target.closest("input, textarea, select")) {
+    const input = $("#searchInput");
+    if (input.offsetParent) { e.preventDefault(); input.focus(); }
+  }
+});
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search")) $("#suggest").hidden = true;
+});
 
 $("#menuToggle").addEventListener("click", () => {
   $("#nav").classList.add("open");
@@ -406,10 +597,13 @@ $$("#nav a").forEach((a) => a.addEventListener("click", closeAll));
 $("#searchInput").addEventListener("input", (e) => {
   searchTerm = e.target.value.trim().toLowerCase();
   renderProducts();
+  renderSuggestions();
 });
+$("#searchInput").addEventListener("focus", renderSuggestions);
 $("#searchInput").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") $("#boutique").scrollIntoView();
+  if (e.key === "Enter") { $("#suggest").hidden = true; $("#boutique").scrollIntoView(); }
 });
+$("#resetFilters").addEventListener("click", resetFilters);
 $("#sortSelect").addEventListener("change", (e) => { sortMode = e.target.value; renderProducts(); });
 
 $("#couponForm").addEventListener("submit", (e) => {
@@ -433,13 +627,28 @@ $("#newsletterForm").addEventListener("submit", (e) => {
 });
 
 window.addEventListener("scroll", () => {
-  $("#header").classList.toggle("scrolled", window.scrollY > 10);
+  const y = window.scrollY;
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  $("#header").classList.toggle("scrolled", y > 10);
+  $("#progress").style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+  $("#toTop").classList.toggle("show", y > 700);
 }, { passive: true });
+$("#toTop").addEventListener("click", () => window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" }));
+
+if (SETTINGS.whatsappNumber) {
+  $("#waFloat").href = `https://wa.me/${SETTINGS.whatsappNumber}`;
+  $("#waFloat").hidden = false;
+}
 
 /* ---------- Démarrage ---------- */
 $("#year").textContent = new Date().getFullYear();
 renderCategories();
+setupPriceFilter();
 renderProducts();
+renderRecent();
+setupTheme();
+setupTilt();
+animateCounters();
 renderCart();
 renderWishlist();
 startCountdown();

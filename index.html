@@ -9,6 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    // Applique le thème enregistré avant l'affichage (évite un flash de couleur)
+    try {
+      const t = localStorage.getItem("khay-theme");
+      if (t) document.documentElement.dataset.theme = JSON.parse(t);
+    } catch (e) {}
+  </script>
 </head>
 <body>
 
@@ -19,6 +26,7 @@
 
   <!-- En-tête -->
   <header class="header" id="header">
+    <div class="progress" id="progress"></div>
     <div class="container header__inner">
       <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">
         <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -38,8 +46,13 @@
       <div class="header__actions">
         <div class="search">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="searchInput" placeholder="Rechercher un produit…" aria-label="Rechercher">
+          <input type="search" id="searchInput" placeholder="Rechercher…  ( / )" aria-label="Rechercher" autocomplete="off">
+          <div class="suggest" id="suggest" hidden></div>
         </div>
+        <button class="icon-btn" id="themeBtn" aria-label="Changer de thème">
+          <svg class="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+          <svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
         <button class="icon-btn" id="wishlistBtn" aria-label="Favoris">
           <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.2 3.3 4.5 7 4.5c2 0 3.5 1.1 5 3 1.5-1.9 3-3 5-3 3.7 0 6 3.7 4.5 7.3C19.5 16.4 12 21 12 21z"/></svg>
           <span class="badge" id="wishlistCount">0</span>
@@ -65,9 +78,9 @@
             <a href="#offre" class="btn btn--ghost">Voir les offres</a>
           </div>
           <ul class="hero__stats">
-            <li><strong>12k+</strong><span>Clients satisfaits</span></li>
-            <li><strong>4,9/5</strong><span>Note moyenne</span></li>
-            <li><strong>48 h</strong><span>Livraison moyenne</span></li>
+            <li><strong data-count="12" data-suffix="k+">12k+</strong><span>Clients satisfaits</span></li>
+            <li><strong data-count="4.9" data-decimals="1" data-suffix="/5">4,9/5</strong><span>Note moyenne</span></li>
+            <li><strong data-count="48" data-suffix=" h">48 h</strong><span>Livraison moyenne</span></li>
           </ul>
         </div>
         <div class="hero__visual reveal">
@@ -116,6 +129,10 @@
 
         <div class="toolbar">
           <div class="filters" id="filters"></div>
+          <label class="price-filter">
+            <span>Prix max : <strong id="priceValue"></strong></span>
+            <input type="range" id="priceRange" step="500" aria-label="Prix maximum">
+          </label>
           <select id="sortSelect" aria-label="Trier les produits">
             <option value="featured">Tendances</option>
             <option value="price-asc">Prix croissant</option>
@@ -125,7 +142,13 @@
         </div>
 
         <div class="products" id="productsGrid"></div>
-        <p class="empty" id="emptyState" hidden>Aucun produit ne correspond à votre recherche. 🔍</p>
+        <p class="empty" id="emptyState" hidden>Aucun produit ne correspond à votre recherche. 🔍
+          <br><button class="btn btn--small" id="resetFilters">Réinitialiser les filtres</button></p>
+
+        <div class="recent" id="recent" hidden>
+          <h3>Vus récemment</h3>
+          <div class="recent__list" id="recentList"></div>
+        </div>
       </div>
     </section>
 
@@ -179,6 +202,34 @@
       </div>
     </section>
 
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="container container--narrow">
+        <div class="section__head reveal">
+          <span class="eyebrow">Questions fréquentes</span>
+          <h2>Tout savoir avant de commander</h2>
+        </div>
+        <div class="faq">
+          <details class="faq__item reveal">
+            <summary>Quels sont les délais de livraison ?</summary>
+            <p>Nous livrons en 24 à 72 h selon votre ville. Vous êtes contacté(e) par téléphone avant la livraison.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>Comment puis-je payer ?</summary>
+            <p>Paiement à la livraison, Wave, Orange Money ou carte bancaire : vous choisissez au moment de commander.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>La livraison est-elle gratuite ?</summary>
+            <p>Oui, dès 50 000 FCFA d'achat. En dessous, les frais de livraison sont de 2 000 FCFA.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>Puis-je retourner un article ?</summary>
+            <p>Vous avez 14 jours après réception pour nous retourner un article non porté, dans son emballage d'origine.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
     <!-- Newsletter -->
     <section class="section" id="contact">
       <div class="container">
@@ -211,7 +262,7 @@
         <h4>Aide</h4>
         <a href="#">Livraison</a>
         <a href="#">Retours</a>
-        <a href="#">FAQ</a>
+        <a href="#faq">FAQ</a>
       </div>
       <div>
         <h4>Contact</h4>
@@ -295,6 +346,11 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <a class="wa-float" id="waFloat" target="_blank" rel="noopener" aria-label="Nous écrire sur WhatsApp" hidden>
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+  </a>
+  <button class="to-top" id="toTop" aria-label="Revenir en haut">↑</button>
 
   <script src="script.js"></script>
 </body>
