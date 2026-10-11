@@ -9,6 +9,7 @@ function boot(data) {
   updateStats();
   renderShop();
   showOverlay('menu');
+  setupDebugPanel();
   requestAnimationFrame(frame);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderShop());
 }

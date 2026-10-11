@@ -40,8 +40,8 @@ function drawChar(c, x, y, s, t, eq, o = {}) {
   const w = s, h = s;
   c.save();
   c.translate(x, y);
-  const sq = o.squash || 0;
-  c.scale(1 + sq * .2, 1 - sq * .2);
+  // Étirement / écrasement (ressort calculé dans feel.js), centré sous les pieds
+  c.scale(o.sx || 1, o.sy || 1);
   if (sk.kind === 'ghost') c.translate(0, -6 + Math.sin(t * 4) * 3);
   else if (!o.air) c.translate(0, -Math.abs(Math.sin(run)) * 3);
   else c.rotate(o.spin || 0);

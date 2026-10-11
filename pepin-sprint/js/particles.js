@@ -33,7 +33,8 @@ function stepParts(parts, dt) {
     if (p.life >= p.max) { parts.splice(i, 1); continue; }
     p.x += p.vx * dt; p.y += p.vy * dt;
     if (p.rot !== undefined) p.rot += (p.vr || 0) * dt;
-    if (p.k === 'spark') p.vy += 500 * dt;
+    if (p.g) p.vy += p.g * dt;  // gravité propre à la particule
+    if (p.drag) { p.vx *= 1 - p.drag * dt; p.vy *= 1 - p.drag * dt; }
   }
 }
 function drawParts(c, parts, bgId) {
@@ -65,6 +66,27 @@ function drawParts(c, parts, bgId) {
       case 'spark':
         c.fillStyle = '#ffe066';
         c.fillRect(p.x - 2, p.y - 2, 4, 4);
+        break;
+      case 'ring':  // anneau qui s'agrandit (pièce ramassée)
+        c.strokeStyle = p.c || '#ffe066'; c.lineWidth = 3 * a;
+        c.beginPath(); c.arc(p.x, p.y, p.s + (1 - a) * 22, 0, 6.283); c.stroke();
+        break;
+      case 'txt':   // petit texte flottant, par exemple « +1 »
+        c.save();
+        c.font = (p.s || 18) + 'px "Lilita One", "Arial Rounded MT Bold", sans-serif';
+        c.textAlign = 'center';
+        c.fillStyle = 'rgba(0,0,0,.3)'; c.fillText(p.text, p.x + 1.5, p.y + 1.5);
+        c.fillStyle = p.c || '#fff'; c.fillText(p.text, p.x, p.y);
+        c.restore();
+        break;
+      case 'chunk': // morceaux du personnage à la collision
+        c.save(); c.translate(p.x, p.y); c.rotate(p.rot || 0);
+        c.fillStyle = p.c; c.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
+        c.restore();
+        break;
+      case 'line':  // traits de vitesse
+        c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 2;
+        c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x + p.s, p.y); c.stroke();
         break;
       case 'puff':
         c.strokeStyle = '#ffffff'; c.lineWidth = 2;

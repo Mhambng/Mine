@@ -2,17 +2,20 @@
 'use strict';
 
 // ---------- Dessin : décor ----------
+// Marge dessinée autour de l'écran : la caméra peut reculer ou trembler sans montrer de bord vide
+const SCENE_MARGIN = 160;
 const DECO = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), s: Math.random(), p: Math.random() * 6.28 }));
 
 function hills(c, w, gy, off, base, amp, freq, color) {
   c.fillStyle = color;
   c.beginPath();
-  c.moveTo(0, gy);
-  for (let x = 0; x <= w + 8; x += 8) {
+  const M = SCENE_MARGIN;
+  c.moveTo(-M, gy);
+  for (let x = -M; x <= w + M + 8; x += 8) {
     const X = x + off;
     c.lineTo(x, base - (Math.sin(X * freq) * .6 + Math.sin(X * freq * 2.3 + 1.7) * .4) * amp);
   }
-  c.lineTo(w, gy);
+  c.lineTo(w + M, gy);
   c.closePath();
   c.fill();
 }
@@ -24,7 +27,8 @@ function drawScene(c, w, h, bgId, scroll, t, gy) {
   sky.addColorStop(0, b.sky[0]);
   sky.addColorStop(1, b.sky[1]);
   c.fillStyle = sky;
-  c.fillRect(0, 0, w, h);
+  const M = SCENE_MARGIN;
+  c.fillRect(-M, -M, w + 2 * M, h + 2 * M);
 
   // Décor lointain
   if (b.deco === 'stars') {
@@ -71,13 +75,13 @@ function drawScene(c, w, h, bgId, scroll, t, gy) {
 
   // Sol
   c.fillStyle = b.ground;
-  c.fillRect(0, gy, w, h - gy);
+  c.fillRect(-M, gy, w + 2 * M, h - gy + M);
   c.fillStyle = b.top;
-  c.fillRect(0, gy, w, 6 * k);
+  c.fillRect(-M, gy, w + 2 * M, 6 * k);
   c.fillStyle = b.obsHi;
   c.globalAlpha = .35;
   const step = 46 * k;
-  for (let x = -(scroll % step); x < w; x += step) {
+  for (let x = -M - (scroll % step); x < w + M; x += step) {
     c.fillRect(x, gy + 16 * k, 14 * k, 3 * k);
     c.fillRect(x + step * .5, gy + 30 * k, 8 * k, 3 * k);
   }

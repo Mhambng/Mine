@@ -1,28 +1,71 @@
 // Sons synthétisés avec Web Audio (aucun fichier son nécessaire).
+// Ce sont des sons provisoires : chaque entrée de `sfx` pourra être remplacée par un vrai fichier plus tard
+// sans toucher au reste du jeu.
 'use strict';
 
-// ---------- Son ----------
 let ac = null;
+let noiseBuf = null;
+
+function audioCtx() {
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+  if (ac.state === 'suspended') ac.resume();
+  return ac;
+}
+
+// Note simple qui glisse de f1 à f2
 function beep(f1, f2, dur, type = 'square', vol = .05, delay = 0) {
   if (save.muted) return;
   try {
-    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
-    const t0 = ac.currentTime + delay;
-    const o = ac.createOscillator(), g = ac.createGain();
+    const a = audioCtx();
+    const t0 = a.currentTime + delay;
+    const o = a.createOscillator(), g = a.createGain();
     o.type = type;
     o.frequency.setValueAtTime(f1, t0);
     o.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
-    g.gain.setValueAtTime(vol, t0);
+    g.gain.setValueAtTime(vol * CONFIG.audio.volume, t0);
     g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
-    o.connect(g).connect(ac.destination);
+    o.connect(g).connect(a.destination);
     o.start(t0); o.stop(t0 + dur + .02);
   } catch (e) { /* pas d'audio */ }
 }
+
+// Bruit filtré : pour les chocs et les « pouf »
+function noise(dur, vol = .08, cutoff = 1200, delay = 0) {
+  if (save.muted) return;
+  try {
+    const a = audioCtx();
+    if (!noiseBuf) {
+      noiseBuf = a.createBuffer(1, a.sampleRate * .5, a.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    const t0 = a.currentTime + delay;
+    const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+    src.buffer = noiseBuf;
+    f.type = 'lowpass'; f.frequency.value = cutoff;
+    g.gain.setValueAtTime(vol * CONFIG.audio.volume, t0);
+    g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    src.connect(f).connect(g).connect(a.destination);
+    src.start(t0); src.stop(t0 + dur + .02);
+  } catch (e) { /* pas d'audio */ }
+}
+
 const sfx = {
+  start: () => { beep(330, 660, .12, 'triangle', .05); beep(495, 990, .14, 'triangle', .05, .09); },
   jump: () => beep(380, 720, .13, 'square', .035),
-  jump2: () => beep(560, 1040, .12, 'square', .03),
-  coin: () => { beep(988, 988, .06, 'triangle', .05); beep(1319, 1319, .1, 'triangle', .05, .06); },
-  die: () => beep(320, 70, .45, 'sawtooth', .045),
+  jump2: () => { beep(560, 1040, .12, 'square', .03); noise(.08, .03, 3000); },
+  // Atterrissage : plus fort si la chute était rapide (k de 0 à 1)
+  land: k => { noise(.07, .02 + .05 * k, 500); beep(160, 70, .08, 'sine', .04 + .05 * k); },
+  // Pièce : la note monte quand on enchaîne (chain = 0, 1, 2…)
+  coin: chain => {
+    const f = 988 * Math.pow(2, Math.min(chain, 12) / 12);
+    beep(f, f, .05, 'triangle', .05);
+    beep(f * 1.335, f * 1.335, .09, 'triangle', .05, .05);
+  },
+  hit: () => { noise(.25, .12, 900); beep(260, 60, .35, 'sawtooth', .05, .02); },
+  pause: () => beep(660, 440, .1, 'triangle', .04),
+  resume: () => beep(440, 660, .1, 'triangle', .04),
+  click: () => beep(900, 700, .04, 'triangle', .03),
   buy: () => { beep(523, 523, .1, 'triangle', .05); beep(659, 659, .1, 'triangle', .05, .1); beep(784, 784, .18, 'triangle', .05, .2); },
   chest: () => { [523, 659, 784, 1047].forEach((f, i) => beep(f, f, .14, 'triangle', .05, i * .09)); },
 };
