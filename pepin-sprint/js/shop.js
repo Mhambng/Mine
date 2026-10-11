@@ -50,8 +50,8 @@ try { const t = localStorage.getItem(KEY + '-tab'); if (CAT[t]) tab = t; } catch
 
 function updateStats() {
   $('coins').textContent = fmt(save.coins);
+  document.querySelectorAll('.coins-mirror').forEach(el => { el.textContent = fmt(save.coins); });
   $('best').textContent = fmt(save.best) + ' pts';
-  $('mute').textContent = save.muted ? 'Son : non' : 'Son : oui';
 }
 function renderTabs() {
   $('tabs').innerHTML = CATS.map(c => `<button class="tab" role="tab" type="button" id="tab-${c.id}" data-tab="${c.id}" aria-selected="${c.id === tab}">${c.label}<span class="count">${save.owned[c.id].length}/${CAT[c.id].length}</span></button>`).join('');

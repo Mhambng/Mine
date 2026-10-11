@@ -4,9 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pépin Sprint</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Lilita+One&display=swap">
+<meta name="theme-color" content="#1b1433">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -22,14 +20,15 @@
   <div class="screen" id="screen">
     <canvas id="game" aria-label="Écran de jeu"></canvas>
     <div class="corner">
-      <button class="iconbtn" id="mute" type="button">Son : oui</button>
+      <button class="iconbtn" id="settings-btn" type="button">Réglages</button>
       <button class="iconbtn" id="pause" type="button" hidden>Pause</button>
     </div>
     <div class="overlay" id="overlay"></div>
   </div>
 
-  <section class="panel missions" aria-labelledby="missions-title">
+  <section class="panel missions sheet" id="missions" aria-labelledby="missions-title">
     <div class="shop-head">
+      <button class="btn ghost small sheet-close" type="button" data-close>Retour</button>
       <div>
         <h2 id="missions-title">Missions du jour</h2>
         <p id="missions-note"></p>
@@ -38,12 +37,14 @@
     <ol class="missions-list" id="missions-list"></ol>
   </section>
 
-  <section class="shop" id="shop" aria-labelledby="shop-title">
+  <section class="shop sheet" id="shop" aria-labelledby="shop-title">
     <div class="shop-head">
+      <button class="btn ghost small sheet-close" type="button" data-close>Retour</button>
       <div>
         <h2 id="shop-title">Boutique</h2>
         <p>Gagne des pièces en courant, puis habille Pépin.</p>
       </div>
+      <div class="stat app-only"><span class="coin-ico" aria-hidden="true"></span><span class="coins-mirror">0</span><small>pièces</small></div>
       <div class="tabs" role="tablist" id="tabs"></div>
     </div>
 
@@ -58,6 +59,22 @@
   <footer>Sauter : <kbd>Espace</kbd> ou toucher l'écran (deux fois pour un double saut). Glisser : <kbd>↓</kbd> ou glisser le doigt vers le bas. Pause : <kbd>P</kbd>.</footer>
 </div>
 
+<!-- Réglages : son, musique, vibrations, achats, confidentialité -->
+<div class="dialog" id="settings" hidden>
+  <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="dialog-head">
+      <h2 id="settings-title">Réglages</h2>
+      <button class="btn ghost small" type="button" data-close>Fermer</button>
+    </div>
+    <div id="settings-body"></div>
+  </section>
+</div>
+
+<!-- Fenêtre générique : porte parentale, deuxième chance, premier lancement -->
+<div class="dialog" id="modal" hidden>
+  <section class="dialog-card" id="modal-card" role="dialog" aria-modal="true"></section>
+</div>
+
 <div class="toast" id="toast" hidden></div>
 
 <script src="js/config.js"></script>
@@ -66,6 +83,7 @@
 <script src="js/catalog.js"></script>
 <script src="js/save.js"></script>
 <script src="js/audio.js"></script>
+<script src="js/music.js"></script>
 <script src="js/scene.js"></script>
 <script src="js/character.js"></script>
 <script src="js/particles.js"></script>
@@ -78,6 +96,8 @@
 <script src="js/game.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/input.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/native.js"></script>
 <script src="js/missions.js"></script>
 <script src="js/shop.js"></script>
 <script src="js/debug.js"></script>

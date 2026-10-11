@@ -11,6 +11,7 @@ function boot(data) {
   renderShop();
   showOverlay('menu');
   setupDebugPanel();
+  setupNative();
   // Message unique (par exemple : remboursement des anciens décors)
   if (save.notice) { toast(save.notice, 6000); save.notice = null; persist(); }
   requestAnimationFrame(frame);

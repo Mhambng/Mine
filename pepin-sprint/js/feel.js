@@ -15,7 +15,7 @@ const Feel = {
 
   // Ajoute du tremblement (désactivé si le joueur a demandé moins d'animations)
   shake(amount) {
-    if (reduceMotion || !CONFIG.feel.shake.enabled) return;
+    if (reduceMotion || !CONFIG.feel.shake.enabled || !save.settings.shake) return;
     this.trauma = Math.min(1, this.trauma + amount);
   },
 

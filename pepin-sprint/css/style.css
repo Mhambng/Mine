@@ -1,3 +1,7 @@
+/* Polices incluses dans le jeu (fonctionne hors ligne). Licence : fonts/LICENCE.txt */
+@font-face { font-family: "Fredoka"; src: url("../fonts/fredoka-latin.woff2") format("woff2"); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "Lilita One"; src: url("../fonts/lilita-one-latin.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+
 /* Mise en page : une borne d'arcade en colonne. Barre de stats, écran de jeu, puis la boutique en dessous. */
 :root {
   --bg: #1b1433;
@@ -43,7 +47,7 @@ h1 span { color: var(--ink); }
 .record { background: var(--coin); color: var(--accent-ink); font-weight: 600; font-size: 13px; padding: 2px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: .08em; }
 .hint { font-size: 13px; }
 kbd { font-family: var(--f-body); font-weight: 600; font-size: 12px; background: rgba(255, 255, 255, .18); border: 1px solid rgba(255, 255, 255, .35); border-bottom-width: 3px; border-radius: 6px; padding: 0 6px; }
-.corner { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; }
+.corner { position: absolute; top: calc(10px + env(safe-area-inset-top, 0px)); right: calc(10px + env(safe-area-inset-right, 0px)); display: flex; gap: 6px; }
 .iconbtn { font: inherit; font-weight: 600; font-size: 13px; border: 0; border-radius: 999px; padding: 5px 11px; background: rgba(20, 12, 40, .5); color: #fff; cursor: pointer; }
 
 .btn { font: inherit; font-weight: 600; border: 0; border-radius: 12px; padding: 10px 20px; cursor: pointer; background: var(--accent); color: var(--accent-ink); box-shadow: 0 4px 0 var(--accent-shadow); transition: transform .08s, box-shadow .08s; }
@@ -124,4 +128,63 @@ footer { color: var(--muted); font-size: 13px; text-align: center; }
   .overlay h2 { font-size: 28px; }
   .overlay .big { font-size: 19px; }
   .overlay p, .end-progress, .end-missions { font-size: 12.5px; }
+}
+
+/* ---------- Accueil ---------- */
+.menu-stats { display: flex; gap: 6px; align-items: center; justify-content: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.big-btn { font-size: 20px; padding: 12px 40px; }
+
+/* ---------- Fenêtres (réglages, porte parentale, deuxième chance) ---------- */
+.dialog { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: rgba(10, 6, 24, .72); }
+.dialog-card { background: var(--panel); border: 2px solid var(--line); border-radius: 20px; padding: 18px; width: min(440px, 100%); max-height: 100%; overflow-y: auto; display: grid; gap: 14px; }
+.dialog-card h2, .dialog-card h3 { font-family: var(--f-display); font-weight: 400; margin: 0; line-height: 1.1; }
+.dialog-card h2 { font-size: 26px; }
+.dialog-card h3 { font-size: 22px; }
+.dialog-card p { margin: 0; }
+.dialog-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.dialog-card .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.dialog-card .muted { color: var(--muted); font-size: 14px; }
+.dialog-card input[type="number"] { font: inherit; font-size: 22px; width: 6em; padding: 8px 10px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); }
+.dialog-card input[type="number"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.error { color: #ffb3c1; font-size: 14px; }
+
+.settings-list { display: grid; gap: 4px; }
+.switch-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; background: var(--panel-2); border-radius: 12px; cursor: pointer; min-height: 48px; }
+.switch-row small { display: block; color: var(--muted); font-size: 12.5px; }
+.switch-row input { appearance: none; -webkit-appearance: none; width: 50px; height: 30px; flex: none; border-radius: 999px; background: var(--line); position: relative; cursor: pointer; transition: background .15s; margin: 0; }
+.switch-row input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); transition: transform .15s; }
+.switch-row input:checked { background: var(--accent); }
+.switch-row input:checked::after { transform: translateX(20px); }
+.switch-row input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.settings-store { display: grid; gap: 8px; }
+.settings-store:empty { display: none; }
+.settings-about { display: grid; gap: 6px; color: var(--muted); font-size: 13.5px; }
+.settings-about a { color: var(--ink); }
+
+/* Le bouton « Retour » des panneaux n'existe qu'en mode appli */
+.sheet-close, .app-only { display: none; }
+
+/* ---------- Mode appli : téléphone en paysage ou application native ---------- */
+html.app, html.app body { height: 100%; overflow: hidden; }
+html.app .wrap { max-width: none; padding: 0; display: block; }
+html.app header, html.app footer { display: none; }
+html.app .screen { position: fixed; inset: 0; aspect-ratio: auto; border: 0; border-radius: 0; }
+html.app .sheet { display: none; }
+html.app[data-sheet="missions"] #missions,
+html.app[data-sheet="shop"] #shop {
+  display: grid; align-content: start; position: fixed; inset: 0; z-index: 30; overflow-y: auto; border: 0; border-radius: 0;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px));
+  background: var(--bg);
+}
+html.app .sheet-close, html.app .app-only { display: inline-flex; }
+html.app .shop-head { align-items: center; justify-content: flex-start; }
+html.app .shop-head > div:not(.tabs):not(.stat) { flex: 1 1 200px; min-width: 0; }
+html.app .tabs { flex-basis: 100%; }
+html.app .dialog-card { width: min(680px, 100%); }
+html.app .settings-list { grid-template-columns: 1fr 1fr; gap: 8px; }
+html.app .overlay { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+html.app .overlay h2 { font-size: 34px; }
+@media (max-height: 420px) {
+  html.app .overlay-card { gap: 6px; }
+  html.app .overlay .hint { display: none; }
 }

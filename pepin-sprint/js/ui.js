@@ -5,19 +5,29 @@ const overlay = $('overlay');
 
 function showOverlay(kind) {
   overlay.hidden = !kind;
+  $('settings-btn').hidden = kind !== 'over';  // l'accueil et la pause ont déjà leur bouton Réglages
   if (!kind) return;
   if (kind === 'menu') {
+    const done = save.missions ? save.missions.list.filter(m => m.done).length : 0;
     overlay.innerHTML = `<div class="overlay-card">
       <h2>Pépin Sprint</h2>
-      <p>Saute par-dessus les pics, glisse sous les poutres et attrape les bonus.</p>
-      <button class="btn" type="button" data-act="play">Jouer</button>
-      <p class="hint"><kbd>Espace</kbd> ou toucher : sauter (deux fois = double saut).<br><kbd>↓</kbd> ou glisser vers le bas : glissade.</p>
+      <p class="menu-stats"><span class="coin-ico" aria-hidden="true"></span>${fmt(save.coins)} · record ${fmt(save.best)} pts</p>
+      <button class="btn big-btn" type="button" data-act="play">Jouer</button>
+      <div class="row">
+        <button class="btn ghost small" type="button" data-act="missions">Missions ${done}/3</button>
+        <button class="btn ghost small" type="button" data-act="shop">Boutique</button>
+        <button class="btn ghost small" type="button" data-act="settings">Réglages</button>
+      </div>
+      <p class="hint">Toucher : sauter (deux fois = double saut) · glisser vers le bas : glissade<br><kbd>Espace</kbd> saut · <kbd>↓</kbd> glissade · <kbd>P</kbd> pause</p>
     </div>`;
   } else if (kind === 'pause') {
     overlay.innerHTML = `<div class="overlay-card">
       <h2>Pause</h2>
       <p class="big">${fmt(Math.floor(G.points))} points</p>
-      <button class="btn" type="button" data-act="resume">Reprendre</button>
+      <div class="row">
+        <button class="btn" type="button" data-act="resume">Reprendre</button>
+        <button class="btn ghost" type="button" data-act="settings">Réglages</button>
+      </div>
     </div>`;
   } else if (kind === 'over') {
     overlay.innerHTML = endScreenHtml(G.lastResult);
@@ -62,7 +72,9 @@ overlay.addEventListener('click', e => {
   if (act) sfx.click();
   if (act === 'play') startRun();
   else if (act === 'resume') resume();
-  else if (act === 'shop') $('shop').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+  else if (act === 'shop') openSheet('shop');
+  else if (act === 'missions') openSheet('missions');
+  else if (act === 'settings') openSettings();
 });
 
 function pauseGame() {
@@ -70,6 +82,7 @@ function pauseGame() {
   G.state = 'pause';
   $('pause').hidden = true;
   showOverlay('pause');
+  Music.stop();
   sfx.pause();
 }
 function resume() {
@@ -78,4 +91,5 @@ function resume() {
   $('pause').hidden = false;
   showOverlay(null);
   sfx.resume();
+  Music.start();
 }

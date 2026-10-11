@@ -8,6 +8,7 @@ Utilisation :
 Le script remplace chaque <link rel="stylesheet" href="css/..."> et <script src="js/...">
 local par son contenu. Aucune dépendance : uniquement la bibliothèque standard Python.
 """
+import base64
 import re
 import sys
 from pathlib import Path
@@ -18,7 +19,13 @@ OUT = Path(__file__).resolve().parent.parent / "dist" / "pepin-sprint.html"
 
 def inline(html: str) -> str:
     def css(m):
-        return "<style>\n" + (ROOT / m.group(1)).read_text(encoding="utf-8") + "</style>"
+        text = (ROOT / m.group(1)).read_text(encoding="utf-8")
+        # Les polices sont intégrées en base64 pour que le fichier unique reste autonome
+        def font(f):
+            data = (ROOT / "css" / f.group(1)).resolve().read_bytes()
+            return 'url("data:font/woff2;base64,' + base64.b64encode(data).decode() + '")'
+        text = re.sub(r'url\("(\.\./fonts/[^"]+)"\)', font, text)
+        return "<style>\n" + text + "</style>"
 
     def js(m):
         code = (ROOT / m.group(1)).read_text(encoding="utf-8")

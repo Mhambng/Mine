@@ -1,0 +1,8 @@
+Polices incluses pour que le jeu fonctionne hors ligne :
+
+- Fredoka (fredoka-latin.woff2) : Copyright The Fredoka Project Authors.
+- Lilita One (lilita-one-latin.woff2) : Copyright Juan Montoreano.
+
+Les deux sont distribuées sous licence SIL Open Font License 1.1 :
+https://openfontlicense.org
+Elles peuvent être incluses dans une application, y compris commerciale.

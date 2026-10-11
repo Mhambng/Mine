@@ -10,6 +10,8 @@ const SLIDE_KEYS = ['ArrowDown', 'KeyS'];
 
 window.addEventListener('keydown', e => {
   const tag = e.target.tagName;
+  // Une fenêtre est ouverte : le clavier sert à la fenêtre, pas au jeu
+  if ((!$('modal').hidden || !$('settings').hidden) && e.code !== 'Escape') return;
   if (JUMP_KEYS.includes(e.code)) {
     if (G.state === 'play') { e.preventDefault(); if (!e.repeat) jumpPress(); return; }
     G.held = true;
@@ -18,6 +20,8 @@ window.addEventListener('keydown', e => {
     else if (G.state === 'pause') { e.preventDefault(); resume(); }
   } else if (SLIDE_KEYS.includes(e.code)) {
     if (G.state === 'play') { e.preventDefault(); if (!e.repeat) slidePress(); }
+  } else if (e.code === 'Escape' && closeTopLayer()) {
+    e.preventDefault();
   } else if (e.code === 'KeyP' || e.code === 'Escape') {
     if (G.state === 'play') pauseGame();
     else if (G.state === 'pause') resume();
@@ -65,12 +69,8 @@ window.addEventListener('pointerup', endTouch);
 window.addEventListener('pointercancel', endTouch);
 
 // Pause automatique quand la page passe en arrière-plan (onglet caché, appel, autre appli)
-document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { pauseGame(); Music.stop(); } });
 window.addEventListener('blur', () => pauseGame());
 
 $('pause').addEventListener('click', pauseGame);
-$('mute').addEventListener('click', () => {
-  save.muted = !save.muted;
-  persist();
-  $('mute').textContent = save.muted ? 'Son : non' : 'Son : oui';
-});
+$('settings-btn').addEventListener('click', () => openSettings());

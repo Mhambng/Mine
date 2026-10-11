@@ -4,6 +4,14 @@
 'use strict';
 
 const CONFIG = {
+  // Application
+  app: {
+    version: '1.0.0',
+    packageId: 'com.mhambng.pepinsprint',
+    // À remplacer par l'adresse publique de la politique (voir docs/politique-de-confidentialite.md)
+    privacyUrl: 'https://github.com/Mhambng/Mine/blob/main/docs/politique-de-confidentialite.md',
+  },
+
   // Monde (unités logiques : l'écran fait toujours 320 de haut, la largeur s'adapte)
   world: {
     height: 320,

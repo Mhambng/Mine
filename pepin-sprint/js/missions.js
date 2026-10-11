@@ -82,6 +82,7 @@ const Missions = {
         this.announced.add(m.id);
         showBanner('Mission accomplie !', '#7df9c8', this.label(m));
         sfx.mission();
+        haptic('light');
       }
     }
   },

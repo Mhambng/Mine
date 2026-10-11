@@ -14,7 +14,7 @@ function audioCtx() {
 
 // Note simple qui glisse de f1 à f2
 function beep(f1, f2, dur, type = 'square', vol = .05, delay = 0) {
-  if (save.muted) return;
+  if (!save.settings.sfx) return;
   try {
     const a = audioCtx();
     const t0 = a.currentTime + delay;
@@ -31,7 +31,7 @@ function beep(f1, f2, dur, type = 'square', vol = .05, delay = 0) {
 
 // Bruit filtré : pour les chocs et les « pouf »
 function noise(dur, vol = .08, cutoff = 1200, delay = 0) {
-  if (save.muted) return;
+  if (!save.settings.sfx) return;
   try {
     const a = audioCtx();
     if (!noiseBuf) {

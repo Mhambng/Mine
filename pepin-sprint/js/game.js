@@ -10,6 +10,13 @@ const PX = CONFIG.world.playerX;
 const S = CONFIG.world.playerSize;
 let W = 800;
 
+// Zones protégées de l'écran (encoche, coins arrondis) en unités du jeu, pour placer le HUD
+const SAFE = { l: 0, r: 0, t: 0 };
+const safeProbe = document.createElement('div');
+safeProbe.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;'
+  + 'padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px)';
+document.body.appendChild(safeProbe);
+
 const newStats = () => ({ jumps: 0, slides: 0, coins: 0, powerups: 0, nearMiss: 0, obstacles: 0, maxMult: 1 });
 
 const G = {
@@ -42,6 +49,10 @@ function resize() {
   cv.height = Math.round(r.height * scale);
   ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
   cacheRes = Math.min(1.5, Math.round(cv.height / H * 4) / 4);  // résolution du cache du ciel
+  const cs = getComputedStyle(safeProbe), k = W / r.width;
+  SAFE.l = (parseFloat(cs.paddingLeft) || 0) * k;
+  SAFE.r = (parseFloat(cs.paddingRight) || 0) * k;
+  SAFE.t = (parseFloat(cs.paddingTop) || 0) * k;
 }
 new ResizeObserver(resize).observe(cv);
 
@@ -74,7 +85,9 @@ function startRun() {
   Missions.startRun();
   $('pause').hidden = false;
   showOverlay(null);
+  closeSheet();
   sfx.start();
+  Music.start();
 }
 
 // ---------- Bandeaux d'annonce (« Ça accélère ! », « Combo ×3 ! »…) ----------
@@ -225,6 +238,8 @@ function die() {
   G.state = 'over';
   G.overAt = performance.now();
   G.slide = 0;
+  Music.stop();
+  haptic('heavy');
   // Impact : micro-pause, tremblement, son, morceaux
   Feel.hitStop(CONFIG.feel.hitStop.hit);
   Feel.shake(CONFIG.feel.shake.hit);
@@ -448,6 +463,8 @@ function drawHud(c) {
   if (G.state === 'menu') return;
   c.save();
   c.textBaseline = 'top';
+  c.save();
+  c.translate(SAFE.l, SAFE.t);  // jamais sous l'encoche
   // Points (en haut à gauche) avec le multiplicateur juste à côté
   const ptsText = fmt(Math.floor(G.points));
   shadowText(c, ptsText, 14, 12, 26, '#ffffff');
@@ -474,6 +491,7 @@ function drawHud(c) {
   shadowText(c, fmt(G.coinsRun), 40, 47 - pop * 3, 20 + pop * 6, '#ffffff');
   // Distance, plus discrète
   shadowText(c, fmt(G.meters) + ' m', 14, 74, 15, 'rgba(255,255,255,.8)');
+  c.restore();
 
   drawPowerUpHud(c);
 

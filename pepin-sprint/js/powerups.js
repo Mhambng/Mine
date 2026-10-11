@@ -21,6 +21,7 @@ function collectPowerUp(it) {
   G.power[it.type] = CONFIG.powerups[it.type].duration;
   G.stats.powerups++;
   sfx.power();
+  haptic('light');
   showBanner(def.name + ' !', def.color);
   for (let i = 0; i < 12; i++) {
     const a = i / 12 * 6.283;
@@ -69,6 +70,7 @@ function absorbHit(o) {
     Feel.hitStop(.05);
     Feel.shake(.45);
     sfx.shieldBreak();
+    haptic('medium');
     Combo.fail(true);
     showBanner('Bouclier cassé', PU_TYPES.shield.color);
     return true;
@@ -156,10 +158,10 @@ function drawPowerUpHud(c) {
   const active = Object.keys(PU_TYPES).filter(t => G.power[t] > 0);
   if (!active.length) return;
   const gap = 46;
-  let x = W - 32 - (active.length - 1) * gap;
+  let x = W - 32 - SAFE.r - (active.length - 1) * gap;
   for (const t of active) {
     const frac = G.power[t] / CONFIG.powerups[t].duration;
-    const y = 76;
+    const y = 76 + SAFE.t;
     c.fillStyle = 'rgba(20,12,40,.55)';
     c.beginPath(); c.arc(x, y, 19, 0, 6.283); c.fill();
     c.strokeStyle = 'rgba(255,255,255,.2)'; c.lineWidth = 4;
