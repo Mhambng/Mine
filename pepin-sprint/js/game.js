@@ -75,6 +75,7 @@ function startRun() {
     spring: makeSpring(), coinChain: 0, lastCoinT: -9,
     power: { magnet: 0, shield: 0, boost: 0 },
     obs: [], coins: [], items: [], hist: [], banners: [],
+    revives: 0, awaitingRevive: false,
     nextSpawn: CONFIG.zones.firstGap * CONFIG.speed.start,
     stats: newStats(),
   });
@@ -254,7 +255,13 @@ function die() {
   // Petit rebond en arrière
   G.vy = -520; G.ground = false;
   springSquash(G.spring, .35);
-  endRun();
+  // Deuxième chance proposée (jamais imposée) avant l'écran de fin
+  if (G.revives < CONFIG.monetization.revivesPerRun && Monetization.canOfferRevive()) {
+    G.awaitingRevive = true;
+    setTimeout(() => { if (G.state === 'over' && G.awaitingRevive) offerRevive(); }, 700);
+  } else {
+    endRun();
+  }
 }
 
 // Fin de partie : pièces gagnées, records, sauvegarde

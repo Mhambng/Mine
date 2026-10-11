@@ -37,10 +37,14 @@ $('settings-body').addEventListener('change', e => {
 });
 
 // ---------- Fenêtres et panneaux ----------
+// Le focus va sur un champ de saisie s'il y en a un, sinon sur la fenêtre elle-même :
+// jamais sur un bouton, pour qu'un appui sur Espace (la touche de saut) ne déclenche rien par erreur.
 function openDialog(id) {
   const d = $(id);
   d.hidden = false;
-  d.querySelector('button, input, a')?.focus({ preventScroll: true });
+  const card = d.querySelector('.dialog-card');
+  card.tabIndex = -1;
+  (d.querySelector('input') || card).focus({ preventScroll: true });
 }
 function closeDialog(id) { $(id).hidden = true; }
 

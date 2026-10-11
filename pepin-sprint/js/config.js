@@ -131,6 +131,41 @@ const CONFIG = {
     },
   },
 
+  // Monétisation (js/monetization.js). Tout est purement cosmétique ou confort, jamais « payer pour gagner ».
+  monetization: {
+    reviveEnabled: true,     // « Deuxième chance » : continuer UNE fois par partie après une pub choisie
+    revivesPerRun: 1,
+    adTimeoutMs: 45000,
+    purchaseTimeoutMs: 120000,
+    // Produits à créer à l'identique dans Google Play Console / App Store Connect puis dans RevenueCat.
+    // Le prix réel affiché vient toujours du store ; fallbackPrice ne sert qu'en mode démo / hors ligne.
+    products: {
+      no_ads: {
+        type: 'non_consumable', title: 'Supprimer les pubs', fallbackPrice: '2,99 €',
+        description: 'Plus jamais de pub. La deuxième chance devient gratuite.',
+      },
+      pack_cosmique: {
+        type: 'non_consumable', title: 'Pack Cosmique', fallbackPrice: '1,99 €',
+        description: 'Personnage Galaxie, traînée Étoiles et effet Feu d’artifice.',
+        grants: [['skin', 'galaxie'], ['trail', 'etoiles'], ['jumpfx', 'artifice']],
+      },
+      pack_royal: {
+        type: 'non_consumable', title: 'Pack Royal', fallbackPrice: '1,99 €',
+        description: 'Couronne, traînée Arc-en-ciel et effet Éclairs.',
+        grants: [['hat', 'couronne'], ['trail', 'arcenciel'], ['jumpfx', 'eclairs']],
+      },
+    },
+    // Identifiants AdMob. Valeurs actuelles = identifiants de TEST officiels de Google.
+    // Remplace-les par les tiens (console AdMob) seulement pour la version publiée, et passe testing à false.
+    admob: {
+      testing: true,
+      rewardedAndroid: 'ca-app-pub-3940256099942544/5224354917',
+      rewardedIos: 'ca-app-pub-3940256099942544/1712485313',
+    },
+    // Clés publiques RevenueCat (tableau de bord RevenueCat > API keys). Vide = achats désactivés proprement.
+    revenuecat: { apiKeyAndroid: '', apiKeyIos: '' },
+  },
+
   // Performance (js/quality.js)
   perf: {
     maxDpr: 2,             // résolution maximale (les écrans à 3x n'apportent rien ici et coûtent cher)

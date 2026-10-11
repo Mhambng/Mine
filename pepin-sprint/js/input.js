@@ -16,7 +16,7 @@ window.addEventListener('keydown', e => {
     if (G.state === 'play') { e.preventDefault(); if (!e.repeat) jumpPress(); return; }
     G.held = true;
     if (tag === 'BUTTON' || tag === 'INPUT') return;
-    if (G.state === 'menu' || (G.state === 'over' && performance.now() - G.overAt > 600)) { e.preventDefault(); startRun(); }
+    if (G.state === 'menu' || (G.state === 'over' && !G.awaitingRevive && performance.now() - G.overAt > 600)) { e.preventDefault(); startRun(); }
     else if (G.state === 'pause') { e.preventDefault(); resume(); }
   } else if (SLIDE_KEYS.includes(e.code)) {
     if (G.state === 'play') { e.preventDefault(); if (!e.repeat) slidePress(); }
@@ -47,7 +47,7 @@ screenEl.addEventListener('pointerdown', e => {
     return;
   }
   G.held = true;
-  if (G.state === 'menu' || (G.state === 'over' && performance.now() - G.overAt > 600)) startRun();
+  if (G.state === 'menu' || (G.state === 'over' && !G.awaitingRevive && performance.now() - G.overAt > 600)) startRun();
   else if (G.state === 'pause') resume();
 });
 screenEl.addEventListener('pointermove', e => {

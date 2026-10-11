@@ -113,6 +113,7 @@ function renderShop() {
   grid.setAttribute('aria-labelledby', 'tab-' + tab);
   grid.innerHTML = '';
   for (const it of CAT[tab]) grid.appendChild(itemCard(tab, it, false));
+  if (typeof renderPacks === 'function') renderPacks();
 }
 $('tabs').addEventListener('click', e => {
   const t = e.target.closest('[data-tab]')?.dataset.tab;
