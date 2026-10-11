@@ -10,7 +10,6 @@ const SLIDE_KEYS = ['ArrowDown', 'KeyS'];
 
 window.addEventListener('keydown', e => {
   const tag = e.target.tagName;
-  if (!$('modal').hidden) return;
   if (JUMP_KEYS.includes(e.code)) {
     if (G.state === 'play') { e.preventDefault(); if (!e.repeat) jumpPress(); return; }
     G.held = true;

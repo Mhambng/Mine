@@ -25,12 +25,31 @@ function showOverlay(kind) {
   }
 }
 
+// Écran de fin : on célèbre ce qui a été fait, on montre le prochain objectif, et on relance en un clic.
+// Pas de message culpabilisant, pas de compte à rebours.
 function endScreenHtml(r) {
+  const totalCoins = r.earned + (r.missionCoins || 0);
+  let goal = '';
+  if (r.record) {
+    goal = r.prevBest > 0 ? `<p>Ancien record : ${fmt(r.prevBest)} points</p>` : '';
+  } else if (save.best > 0) {
+    const pct = Math.round(100 * Math.min(1, r.points / save.best));
+    goal = `<div class="end-progress">
+      <span>Record : ${fmt(save.best)} points · encore ${fmt(save.best - r.points)} pour le battre</span>
+      <div class="bar"><span style="width:${pct}%"></span></div>
+    </div>`;
+  }
+  const done = (r.missions?.completed || []).map(m => `<li>✓ Mission accomplie : ${Missions.label(m)} (+${m.reward})</li>`);
+  const prog = (r.missions?.progressed || []).slice(0, done.length ? 0 : 1)
+    .map(m => `<li>Mission : ${Missions.label(m)} · ${fmt(m.progress)}/${fmt(m.target)}</li>`);
+  const missions = done.length || prog.length ? `<ul class="end-missions">${done.join('')}${prog.join('')}</ul>` : '';
   return `<div class="overlay-card">
     ${r.record ? '<span class="record">Nouveau record</span>' : ''}
-    <h2>${r.record ? 'Incroyable !' : 'Bien joué !'}</h2>
+    <h2>${r.record ? 'Incroyable !' : pick(['Bien joué !', 'Belle course !', 'Bravo !'])}</h2>
     <p class="big">${fmt(r.points)} points</p>
-    <p>${fmt(r.meters)} m · combo max ×${r.maxMult} · +${fmt(r.earned)} pièces</p>
+    <p>${fmt(r.meters)} m · combo max ×${r.maxMult} · +${fmt(totalCoins)} pièces</p>
+    ${goal}
+    ${missions}
     <div class="row">
       <button class="btn" type="button" data-act="play">Encore !</button>
       <button class="btn ghost" type="button" data-act="shop">Boutique</button>

@@ -28,6 +28,16 @@
     <div class="overlay" id="overlay"></div>
   </div>
 
+  <section class="panel missions" aria-labelledby="missions-title">
+    <div class="shop-head">
+      <div>
+        <h2 id="missions-title">Missions du jour</h2>
+        <p id="missions-note"></p>
+      </div>
+    </div>
+    <ol class="missions-list" id="missions-list"></ol>
+  </section>
+
   <section class="shop" id="shop" aria-labelledby="shop-title">
     <div class="shop-head">
       <div>
@@ -37,39 +47,17 @@
       <div class="tabs" role="tablist" id="tabs"></div>
     </div>
 
-    <div class="chest">
-      <canvas id="chest-art" width="144" height="120" aria-hidden="true"></canvas>
-      <div class="chest-text">
-        <strong>Coffre mystère</strong>
-        <p>Un objet que tu n'as pas encore, au hasard.</p>
-        <div class="odds">
-          <span class="r-commun">Commun 55 %</span>
-          <span class="r-rare">Rare 30 %</span>
-          <span class="r-epique">Épique 12 %</span>
-          <span class="r-legendaire">Légendaire 3 %</span>
-        </div>
-      </div>
-      <button class="btn" id="open-chest" type="button"></button>
+    <div class="featured" id="featured">
+      <h3>À la une aujourd’hui</h3>
+      <div class="grid" id="featured-grid"></div>
     </div>
 
     <div class="grid" id="grid" role="tabpanel"></div>
   </section>
 
-  <footer>Espace, flèche du haut ou toucher l'écran pour sauter. Deux sauts possibles. <kbd>P</kbd> pour la pause.</footer>
+  <footer>Sauter : <kbd>Espace</kbd> ou toucher l'écran (deux fois pour un double saut). Glisser : <kbd>↓</kbd> ou glisser le doigt vers le bas. Pause : <kbd>P</kbd>.</footer>
 </div>
 
-<div class="modal" id="modal" hidden>
-  <div class="modal-card">
-    <canvas id="reveal" aria-hidden="true"></canvas>
-    <span class="chip" id="reveal-chip"></span>
-    <h3 id="reveal-name"></h3>
-    <p id="reveal-cat" style="margin:0;color:var(--muted)"></p>
-    <div class="row">
-      <button class="btn" id="reveal-equip" type="button">Équiper</button>
-      <button class="btn ghost" id="reveal-close" type="button">Fermer</button>
-    </div>
-  </div>
-</div>
 <div class="toast" id="toast" hidden></div>
 
 <script src="js/config.js"></script>
@@ -89,6 +77,7 @@
 <script src="js/game.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/input.js"></script>
+<script src="js/missions.js"></script>
 <script src="js/shop.js"></script>
 <script src="js/debug.js"></script>
 <script src="js/main.js"></script>

@@ -1,4 +1,5 @@
-// Boutique : aperçus, achats, équipement, coffre mystère.
+// Boutique : aperçus, vitrine du jour, achats (avec confirmation), équipement.
+// Tout se paie en pièces gagnées en jouant. Aucun objet n'est tiré au hasard.
 'use strict';
 
 // ---------- Aperçus (boutique) ----------
@@ -41,27 +42,9 @@ function renderPreview(cv, cat, id, w = 200, h = 150) {
   }
   drawChar(c, px, gy, s, 1.0, eq, { run: .7 });
 }
-function drawChestArt() {
-  const cv = $('chest-art'), c = cv.getContext('2d');
-  c.clearRect(0, 0, 144, 120);
-  c.save(); c.scale(2, 2);
-  c.fillStyle = 'rgba(0,0,0,.25)';
-  c.beginPath(); c.ellipse(36, 54, 28, 5, 0, 0, 6.283); c.fill();
-  c.fillStyle = '#8a4b26'; rr(c, 10, 26, 52, 28, 4); c.fill();
-  c.fillStyle = '#a65d30'; c.beginPath(); c.moveTo(10, 28); c.quadraticCurveTo(36, 4, 62, 28); c.closePath(); c.fill();
-  c.fillStyle = '#ffd447';
-  c.fillRect(10, 26, 52, 5);
-  c.fillRect(20, 14, 5, 40); c.fillRect(47, 14, 5, 40);
-  rr(c, 31, 28, 10, 12, 2); c.fill();
-  c.fillStyle = '#5a2e14'; c.fillRect(35, 33, 2, 4);
-  c.restore();
-}
-
-
 // ---------- Boutique ----------
 let tab = 'skin';
 try { const t = localStorage.getItem(KEY + '-tab'); if (CAT[t]) tab = t; } catch (e) { /* rien */ }
-const CHEST_PRICE = 200;
 
 function updateStats() {
   $('coins').textContent = fmt(save.coins);
@@ -71,43 +54,63 @@ function updateStats() {
 function renderTabs() {
   $('tabs').innerHTML = CATS.map(c => `<button class="tab" role="tab" type="button" id="tab-${c.id}" data-tab="${c.id}" aria-selected="${c.id === tab}">${c.label}<span class="count">${save.owned[c.id].length}/${CAT[c.id].length}</span></button>`).join('');
 }
+
+// Une carte d'objet (aperçu, nom, rareté, bouton)
+function itemCard(cat, it, showCat) {
+  const owned = save.owned[cat].includes(it.id);
+  const eq = save.eq[cat] === it.id;
+  const card = document.createElement('div');
+  card.className = 'item' + (eq ? ' equipped' : '');
+  const cvs = document.createElement('canvas');
+  cvs.setAttribute('aria-hidden', 'true');
+  card.appendChild(cvs);
+  const top = document.createElement('div');
+  top.className = 'item-top';
+  top.innerHTML = `<span class="name">${it.name}</span><span class="chip r-${it.rar}">${RAR[it.rar].label}</span>`
+    + (showCat ? `<span class="item-cat">${CATS.find(c => c.id === cat).one}</span>` : '');
+  card.appendChild(top);
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn small' + (eq || owned ? ' ghost' : '');
+  btn.dataset.id = it.id;
+  btn.dataset.cat = cat;
+  if (eq) { btn.textContent = 'Équipé'; btn.disabled = true; }
+  else if (owned) { btn.textContent = 'Équiper'; btn.dataset.act = 'equip'; }
+  else {
+    btn.innerHTML = `<span class="coin-ico" aria-hidden="true"></span>${fmt(it.price)}`;
+    btn.setAttribute('aria-label', `Acheter ${it.name} pour ${it.price} pièces`);
+    btn.dataset.act = 'buy';
+    if (save.coins < it.price) { btn.disabled = true; btn.title = `Il te manque ${it.price - save.coins} pièces`; }
+  }
+  card.appendChild(btn);
+  renderPreview(cvs, cat, it.id);
+  return card;
+}
+
+// Vitrine du jour : 3 objets pas encore possédés, mis en avant (même prix, aucun compte à rebours)
+function featuredToday() {
+  const rand = seededRandom('vitrine-' + todayKey());
+  const pool = [];
+  for (const c of CATS) for (const it of CAT[c.id]) if (it.price > 0) pool.push({ cat: c.id, it });
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.filter(p => !save.owned[p.cat].includes(p.it.id)).slice(0, 3);
+}
+
 function renderShop() {
   renderTabs();
+  const feat = featuredToday();
+  $('featured').hidden = !feat.length;
+  const fg = $('featured-grid');
+  fg.innerHTML = '';
+  for (const f of feat) fg.appendChild(itemCard(f.cat, f.it, true));
+
   const grid = $('grid');
   grid.setAttribute('aria-labelledby', 'tab-' + tab);
   grid.innerHTML = '';
-  for (const it of CAT[tab]) {
-    const owned = save.owned[tab].includes(it.id);
-    const eq = save.eq[tab] === it.id;
-    const card = document.createElement('div');
-    card.className = 'item' + (eq ? ' equipped' : '');
-    const cvs = document.createElement('canvas');
-    cvs.setAttribute('aria-hidden', 'true');
-    card.appendChild(cvs);
-    const top = document.createElement('div');
-    top.className = 'item-top';
-    top.innerHTML = `<span class="name">${it.name}</span><span class="chip r-${it.rar}">${RAR[it.rar].label}</span>`;
-    card.appendChild(top);
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn small' + (eq || owned ? ' ghost' : '');
-    btn.dataset.id = it.id;
-    if (eq) { btn.textContent = 'Équipé'; btn.disabled = true; }
-    else if (owned) { btn.textContent = 'Équiper'; btn.dataset.act = 'equip'; }
-    else {
-      btn.innerHTML = `<span class="coin-ico" aria-hidden="true"></span>${fmt(it.price)}`;
-      btn.setAttribute('aria-label', `Acheter ${it.name} pour ${it.price} pièces`);
-      btn.dataset.act = 'buy';
-      if (save.coins < it.price) { btn.disabled = true; btn.title = `Il te manque ${it.price - save.coins} pièces`; }
-    }
-    card.appendChild(btn);
-    grid.appendChild(card);
-    renderPreview(cvs, tab, it.id);
-  }
-  const chestBtn = $('open-chest');
-  const left = CATS.reduce((n, c) => n + CAT[c.id].length - save.owned[c.id].length, 0);
-  chestBtn.innerHTML = left ? `<span class="coin-ico" aria-hidden="true"></span> Ouvrir · ${CHEST_PRICE}` : 'Tout est débloqué';
-  chestBtn.disabled = !left || save.coins < CHEST_PRICE;
+  for (const it of CAT[tab]) grid.appendChild(itemCard(tab, it, false));
 }
 $('tabs').addEventListener('click', e => {
   const t = e.target.closest('[data-tab]')?.dataset.tab;
@@ -116,27 +119,51 @@ $('tabs').addEventListener('click', e => {
   try { localStorage.setItem(KEY + '-tab', t); } catch (err) { /* rien */ }
   renderShop();
 });
-$('grid').addEventListener('click', e => {
+
+// Achat en deux temps : le premier appui demande confirmation (« Confirmer ? »), le second achète.
+// Évite les achats par erreur, surtout sur écran tactile.
+let pendingBuy = null, pendingTimer = 0;
+function onShopClick(e) {
   const b = e.target.closest('button[data-act]');
   if (!b) return;
-  const it = find(tab, b.dataset.id);
+  const cat = b.dataset.cat;
+  const it = find(cat, b.dataset.id);
   if (b.dataset.act === 'buy') {
     if (save.coins < it.price) return;
+    const key = cat + ':' + it.id;
+    if (pendingBuy !== key) {
+      // Premier appui : on demande confirmation
+      renderShop();
+      pendingBuy = key;
+      document.querySelectorAll(`button[data-cat="${cat}"][data-id="${it.id}"]`).forEach(x => {
+        x.classList.add('confirm');
+        x.innerHTML = `Confirmer · <span class="coin-ico" aria-hidden="true"></span>${fmt(it.price)}`;
+      });
+      clearTimeout(pendingTimer);
+      pendingTimer = setTimeout(() => { pendingBuy = null; renderShop(); }, 3500);
+      sfx.click();
+      return;
+    }
+    pendingBuy = null;
+    clearTimeout(pendingTimer);
     save.coins -= it.price;
-    save.owned[tab].push(it.id);
-    save.eq[tab] = it.id;
+    save.owned[cat].push(it.id);
+    save.eq[cat] = it.id;
     sfx.buy();
     toast(`${it.name} acheté et équipé`);
   } else {
-    save.eq[tab] = it.id;
+    save.eq[cat] = it.id;
+    sfx.click();
     toast(`${it.name} équipé`);
   }
-  if (tab === 'trail') { G.parts = []; G.hist = []; }
+  if (cat === 'trail') { G.parts = []; G.hist = []; }
   persist();
   updateStats();
   renderShop();
-  $('grid').querySelector(`[data-id="${it.id}"]`)?.focus({ preventScroll: true });
-});
+  document.querySelector(`#grid [data-id="${it.id}"]`)?.focus({ preventScroll: true });
+}
+$('grid').addEventListener('click', onShopClick);
+$('featured-grid').addEventListener('click', onShopClick);
 
 let toastTimer = 0;
 function toast(msg, ms = 1800) {
@@ -146,79 +173,3 @@ function toast(msg, ms = 1800) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { el.hidden = true; }, ms);
 }
-
-// Coffre mystère
-let revealed = null;
-function rollChest() {
-  const pool = {};
-  for (const c of CATS) for (const it of CAT[c.id]) {
-    if (!save.owned[c.id].includes(it.id)) (pool[it.rar] = pool[it.rar] || []).push({ cat: c.id, it });
-  }
-  const rars = Object.keys(pool);
-  if (!rars.length) return null;
-  const total = rars.reduce((s, r) => s + RAR[r].weight, 0);
-  let x = Math.random() * total;
-  for (const r of rars) {
-    x -= RAR[r].weight;
-    if (x <= 0) return pick(pool[r]);
-  }
-  return pick(pool[rars[rars.length - 1]]);
-}
-$('open-chest').addEventListener('click', () => {
-  if (save.coins < CHEST_PRICE) return;
-  const got = rollChest();
-  if (!got) return;
-  save.coins -= CHEST_PRICE;
-  save.owned[got.cat].push(got.it.id);
-  persist();
-  updateStats();
-  revealed = got;
-  const modal = $('modal'), card = modal.querySelector('.modal-card');
-  const cvs = $('reveal');
-  card.classList.remove('glow');
-  card.style.color = '';
-  modal.hidden = false;
-  $('reveal-name').textContent = 'Ouverture…';
-  $('reveal-chip').hidden = true;
-  $('reveal-cat').textContent = '';
-  $('reveal-equip').hidden = true;
-  const c = cvs.getContext('2d');
-  cvs.width = 520; cvs.height = 390;
-  c.setTransform(1, 0, 0, 1, 0, 0);
-  c.fillStyle = '#31275c'; c.fillRect(0, 0, 520, 390);
-  c.drawImage($('chest-art'), 188, 140, 144, 120);
-  cvs.classList.add('shaking');
-  $('reveal-close').focus();
-  setTimeout(() => {
-    cvs.classList.remove('shaking');
-    renderPreview(cvs, got.cat, got.it.id, 260, 195);
-    const chip = $('reveal-chip');
-    chip.hidden = false;
-    chip.className = 'chip r-' + got.it.rar;
-    chip.textContent = RAR[got.it.rar].label;
-    $('reveal-name').textContent = got.it.name;
-    $('reveal-cat').textContent = CATS.find(c => c.id === got.cat).one + ' · nouveau';
-    $('reveal-equip').hidden = false;
-    card.className = 'modal-card glow r-' + got.it.rar;
-    sfx.chest();
-    renderShop();
-  }, reduceMotion ? 150 : 900);
-});
-function closeModal() {
-  $('modal').hidden = true;
-  $('modal').querySelector('.modal-card').className = 'modal-card';
-  $('open-chest').focus({ preventScroll: true });
-}
-$('reveal-close').addEventListener('click', closeModal);
-$('reveal-equip').addEventListener('click', () => {
-  if (!revealed) return;
-  save.eq[revealed.cat] = revealed.it.id;
-  if (revealed.cat === 'trail') { G.parts = []; G.hist = []; }
-  persist();
-  tab = revealed.cat;
-  toast(`${revealed.it.name} équipé`);
-  renderShop();
-  closeModal();
-});
-$('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
-window.addEventListener('keydown', e => { if (e.code === 'Escape' && !$('modal').hidden) closeModal(); });

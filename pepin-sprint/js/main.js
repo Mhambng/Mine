@@ -5,7 +5,8 @@
 function boot(data) {
   if (data && data.save) save = normalize(data.save);
   resize();
-  drawChestArt();
+  Missions.ensure();
+  renderMissions();
   updateStats();
   renderShop();
   showOverlay('menu');

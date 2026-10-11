@@ -24,8 +24,8 @@ Les scripts sont chargés dans cet ordre par `index.html` :
 |---|---|
 | `js/config.js` | Tous les réglages |
 | `js/util.js` | Petits outils (DOM, hasard, formatage) |
-| `js/catalog.js` | Cosmétiques et palettes des décors |
-| `js/save.js` | Sauvegarde locale |
+| `js/catalog.js` | Cosmétiques et palettes des zones |
+| `js/save.js` | Sauvegarde locale versionnée (migration automatique des anciennes sauvegardes) |
 | `js/audio.js` | Sons synthétisés (provisoires) |
 | `js/scene.js` | Dessin du décor |
 | `js/character.js` | Dessin du personnage et des chapeaux |
@@ -39,7 +39,8 @@ Les scripts sont chargés dans cet ordre par `index.html` :
 | `js/game.js` | Boucle de jeu, saut, glissade, collisions, rendu, HUD |
 | `js/ui.js` | Écrans d'accueil, de pause et de fin |
 | `js/input.js` | Clavier, souris, écran tactile |
-| `js/shop.js` | Boutique |
+| `js/missions.js` | Missions du jour (3 par jour, renouvelées chaque jour, récompenses automatiques) |
+| `js/shop.js` | Boutique : vitrine du jour, achats avec confirmation |
 | `js/debug.js` | Panneau `#reglages` |
 | `js/main.js` | Démarrage |
 

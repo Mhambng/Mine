@@ -79,5 +79,5 @@ const sfx = {
   comboLost: () => beep(400, 200, .18, 'triangle', .035),
   nearMiss: () => { noise(.1, .04, 6000); beep(1200, 1800, .07, 'sine', .03); },
   buy: () => { beep(523, 523, .1, 'triangle', .05); beep(659, 659, .1, 'triangle', .05, .1); beep(784, 784, .18, 'triangle', .05, .2); },
-  chest: () => { [523, 659, 784, 1047].forEach((f, i) => beep(f, f, .14, 'triangle', .05, i * .09)); },
+  mission: () => { [523, 659, 784, 1047].forEach((f, i) => beep(f, f, .14, 'triangle', .05, i * .09)); },
 };

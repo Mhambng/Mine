@@ -70,6 +70,7 @@ function startRun() {
   Director.reset();
   Combo.reset();
   Biomes.reset();
+  Missions.startRun();
   $('pause').hidden = false;
   showOverlay(null);
   sfx.start();
@@ -307,6 +308,7 @@ function updatePlay(dt) {
   G.meters = Math.floor(G.dist / 12);
   G.points += dx / 12 * Combo.mult;   // les points de distance profitent du multiplicateur
   Biomes.update(dt, G.meters);
+  Missions.tick();
 
   // Physique du saut (gravité un peu plus forte en descente)
   if (!G.ground) {
@@ -465,7 +467,7 @@ function drawHud(c) {
   drawPowerUpHud(c);
 
   // Bandeau d'annonce au centre
-  const b = G.banners[G.banners.length - 1];
+  const b = G.state === 'play' ? G.banners[G.banners.length - 1] : null;
   if (b) {
     const t = b.t;
     const pop2 = t < .15 ? .6 + t / .15 * .5 : Math.max(1, 1.1 - (t - .15) * .6);
