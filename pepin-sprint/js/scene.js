@@ -20,30 +20,15 @@ function hills(c, w, gy, off, base, amp, freq, color) {
   c.fill();
 }
 
-// alpha < 1 : sert au fondu entre deux zones (voir biomes.js)
-function drawScene(c, w, h, bgId, scroll, t, gy, alpha = 1) {
-  const b = BG[bgId] || BG.crepuscule;
-  c.globalAlpha = alpha;
-  const k = h / 320;
+// Ciel (dégradé) et soleil : la partie fixe du décor
+function paintSky(c, b, w, h, gy, M) {
   const sky = c.createLinearGradient(0, 0, 0, gy);
   sky.addColorStop(0, b.sky[0]);
   sky.addColorStop(1, b.sky[1]);
   c.fillStyle = sky;
-  const M = SCENE_MARGIN;
   c.fillRect(-M, -M, w + 2 * M, h + 2 * M);
-
-  // Décor lointain
-  if (b.deco === 'stars') {
-    for (const d of DECO) {
-      const x = ((d.x * w - scroll * .02) % w + w) % w;
-      c.globalAlpha = alpha * (.35 + .65 * Math.abs(Math.sin(t * 1.5 + d.p)));
-      c.fillStyle = b.decoC;
-      c.fillRect(x, d.y * gy * .75, 1 + d.s * 1.6 * k, 1 + d.s * 1.6 * k);
-    }
-    c.globalAlpha = alpha;
-  }
-
-  // Soleil, lune ou planète
+}
+function paintSun(c, b, w, h, gy, k) {
   const s = b.sun, sx = s.x * w, sy = s.y * gy, sr = s.r * k;
   c.save();
   c.shadowColor = s.c;
@@ -56,6 +41,57 @@ function drawScene(c, w, h, bgId, scroll, t, gy, alpha = 1) {
     c.lineWidth = 4 * k;
     c.beginPath(); c.ellipse(sx, sy, sr * 1.8, sr * .45, -.35, 0, 6.283); c.stroke();
   }
+
+}
+
+// Cache du ciel + soleil par zone et par taille d'écran (au plus 3 images gardées en mémoire)
+const SKY_MARGIN = 100;
+const skyCache = new Map();
+let cacheRes = 1;  // résolution du cache, mise à jour par resize() (game.js)
+function skyLayer(bgId, b, w, h, gy, res) {
+  const key = bgId + '|' + w + '|' + h + '|' + gy + '|' + res;
+  let layer = skyCache.get(key);
+  if (!layer) {
+    if (skyCache.size >= 3) skyCache.delete(skyCache.keys().next().value);
+    layer = document.createElement('canvas');
+    layer.width = Math.ceil((w + 2 * SKY_MARGIN) * res);
+    layer.height = Math.ceil((h + 2 * SKY_MARGIN) * res);
+    const c = layer.getContext('2d');
+    c.setTransform(res, 0, 0, res, SKY_MARGIN * res, SKY_MARGIN * res);
+    paintSky(c, b, w, h, gy, SKY_MARGIN);
+    paintSun(c, b, w, h, gy, h / 320);
+    skyCache.set(key, layer);
+  }
+  return layer;
+}
+
+// alpha < 1 : sert au fondu entre deux zones (voir biomes.js)
+// cached = true : utilise le cache du ciel (écran de jeu principal uniquement)
+function drawScene(c, w, h, bgId, scroll, t, gy, alpha = 1, cached = false) {
+  const b = BG[bgId] || BG.crepuscule;
+  c.globalAlpha = alpha;
+  const k = h / 320;
+  const M = SCENE_MARGIN;
+  const res = cached ? cacheRes : 0;
+  if (res) {
+    // Ciel + soleil pré-dessinés une seule fois (dégradé et halo flou coûtent cher à chaque image)
+    c.drawImage(skyLayer(bgId, b, w, h, gy, res), -SKY_MARGIN, -SKY_MARGIN, w + 2 * SKY_MARGIN, h + 2 * SKY_MARGIN);
+  } else {
+    paintSky(c, b, w, h, gy, M, k);
+  }
+
+  // Décor lointain
+  if (b.deco === 'stars') {
+    for (const d of DECO) {
+      const x = ((d.x * w - scroll * .02) % w + w) % w;
+      c.globalAlpha = alpha * (.35 + .65 * Math.abs(Math.sin(t * 1.5 + d.p)));
+      c.fillStyle = b.decoC;
+      c.fillRect(x, d.y * gy * .75, 1 + d.s * 1.6 * k, 1 + d.s * 1.6 * k);
+    }
+    c.globalAlpha = alpha;
+  }
+
+  if (!res) paintSun(c, b, w, h, gy, k);
 
   if (b.deco === 'clouds') {
     c.fillStyle = b.decoC;

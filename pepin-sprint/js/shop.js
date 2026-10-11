@@ -18,11 +18,12 @@ function renderPreview(cv, cat, id, w = 200, h = 150) {
     // Aperçu d'un effet de saut : Pépin en l'air au-dessus de l'effet de réception
     const parts = [];
     emitJumpFx(parts, id, 'land', px, gy, 0);
-    if (id === 'classique') for (let i = 0; i < 6; i++) parts.push({ k: 'dust', x: px + rnd(-16, 16), y: gy - 3, vx: rnd(-40, 40), vy: rnd(-40, -10), life: 0, max: .5, s: 3 + Math.random() * 3 });
+    if (id === 'classique') for (let i = 0; i < 6; i++) addPart(parts, 'dust', px + rnd(-16, 16), gy - 3, rnd(-40, 40), rnd(-40, -10), .5, 3 + Math.random() * 3);
     for (let i = 0; i < 9; i++) stepParts(parts, 1 / 60);
     emitJumpFx(parts, id, 'jump', px, gy, 0);
     for (let i = 0; i < 4; i++) stepParts(parts, 1 / 60);
     drawParts(c, parts, bg);
+    clearParts(parts);
     drawChar(c, px, gy - s * .9, s, 1.0, eq, { air: true, sx: .9, sy: 1.12 });
     return;
   }
@@ -39,6 +40,7 @@ function renderPreview(cv, cat, id, w = 200, h = 150) {
     }
     if (id === 'arcenciel') drawRainbow(c, hist, px - s * .3, d);
     drawParts(c, parts, bg);
+    clearParts(parts);
   }
   drawChar(c, px, gy, s, 1.0, eq, { run: .7 });
 }
@@ -156,7 +158,7 @@ function onShopClick(e) {
     sfx.click();
     toast(`${it.name} équipé`);
   }
-  if (cat === 'trail') { G.parts = []; G.hist = []; }
+  if (cat === 'trail') { clearParts(G.parts); G.hist.length = 0; }
   persist();
   updateStats();
   renderShop();

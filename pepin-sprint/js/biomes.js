@@ -28,10 +28,10 @@ const Biomes = {
 
   draw(c, w, h, scroll, t, gy) {
     if (this.prev && this.fade < 1) {
-      drawScene(c, w, h, this.prev, scroll, t, gy, 1);
-      drawScene(c, w, h, this.current(), scroll, t, gy, this.fade);
+      drawScene(c, w, h, this.prev, scroll, t, gy, 1, true);
+      drawScene(c, w, h, this.current(), scroll, t, gy, this.fade, true);
     } else {
-      drawScene(c, w, h, this.current(), scroll, t, gy, 1);
+      drawScene(c, w, h, this.current(), scroll, t, gy, 1, true);
     }
   },
 };

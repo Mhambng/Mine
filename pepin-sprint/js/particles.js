@@ -1,28 +1,46 @@
 // Particules et traînées cosmétiques.
 'use strict';
 
+// ---------- Pool de particules ----------
+// Les particules sont recyclées au lieu d'être recréées : aucune allocation mémoire pendant la partie
+// une fois le pool rempli (moins de pauses du ramasse-miettes sur les téléphones modestes).
+// Nombre maximal de particules vivantes : CONFIG.perf.maxParticles (réduit automatiquement si l'appareil rame).
+const PART_POOL = [];
+const PART_DUMMY = {};  // renvoyé quand la limite est atteinte : la particule est simplement ignorée
+function addPart(arr, k, x, y, vx, vy, max, s) {
+  if (arr.length >= Quality.maxParticles) return PART_DUMMY;
+  const p = PART_POOL.pop() || {};
+  p.k = k; p.x = x; p.y = y; p.vx = vx; p.vy = vy; p.max = max; p.s = s;
+  p.life = 0; p.g = 0; p.drag = 0; p.rot = 0; p.vr = 0; p.c = null; p.text = null; p.seed = 0;
+  arr.push(p);
+  return p;
+}
+function clearParts(arr) {
+  while (arr.length) PART_POOL.push(arr.pop());
+}
+
 // ---------- Particules et traînées ----------
 const RAINBOW = ['#ff5e5e', '#ffa94d', '#ffe066', '#69db7c', '#4dabf7', '#9775fa'];
 function emitTrail(parts, id, x, y, onGround, speed) {
   const R = Math.random;
   switch (id) {
     case 'poussiere':
-      if (onGround && R() < .55) parts.push({ k: 'dust', x, y: y + 18, vx: -speed * .6 - 30 * R(), vy: -20 - 40 * R(), life: 0, max: .45, s: 3 + R() * 4 });
+      if (onGround && R() < .55) addPart(parts, 'dust', x, y + 18, -speed * .6 - 30 * R(), -20 - 40 * R(), .45, 3 + R() * 4);
       break;
     case 'bulles':
-      if (R() < .3) parts.push({ k: 'bub', x, y: y + rnd(-12, 12), vx: -speed * .7, vy: -20 - 30 * R(), life: 0, max: 1.1, s: 3 + R() * 6 });
+      if (R() < .3) addPart(parts, 'bub', x, y + rnd(-12, 12), -speed * .7, -20 - 30 * R(), 1.1, 3 + R() * 6);
       break;
     case 'coeurs':
-      if (R() < .2) parts.push({ k: 'heart', x, y: y + rnd(-10, 10), vx: -speed * .75, vy: -25 - 20 * R(), life: 0, max: 1, s: 8 + R() * 5, c: pick(['#ff6b9a', '#ff9ec4', '#ff4d7a']) });
+      if (R() < .2) addPart(parts, 'heart', x, y + rnd(-10, 10), -speed * .75, -25 - 20 * R(), 1, 8 + R() * 5).c = pick(['#ff6b9a', '#ff9ec4', '#ff4d7a']);
       break;
     case 'etoiles':
-      if (R() < .4) parts.push({ k: 'star', x, y: y + rnd(-14, 14), vx: -speed * .8, vy: rnd(-20, 20), life: 0, max: .8, s: 3 + R() * 4, rot: R() * 6, vr: rnd(-6, 6), c: pick(['#fff6a8', '#ffffff', '#ffd447']) });
+      if (R() < .4) { const pt = addPart(parts, 'star', x, y + rnd(-14, 14), -speed * .8, rnd(-20, 20), .8, 3 + R() * 4); pt.rot = R() * 6; pt.vr = rnd(-6, 6); pt.c = pick(['#fff6a8', '#ffffff', '#ffd447']); }
       break;
     case 'flammes':
-      for (let i = 0; i < 2; i++) parts.push({ k: 'fire', x: x + rnd(-3, 3), y: y + rnd(-8, 10), vx: -speed * .7 - 40 * R(), vy: -50 - 40 * R(), life: 0, max: .38 + R() * .15, s: 7 + R() * 6 });
+      for (let i = 0; i < 2; i++) addPart(parts, 'fire', x + rnd(-3, 3), y + rnd(-8, 10), -speed * .7 - 40 * R(), -50 - 40 * R(), .38 + R() * .15, 7 + R() * 6);
       break;
     case 'arcenciel':
-      if (R() < .15) parts.push({ k: 'star', x: x - 10, y: y + rnd(-14, 14), vx: -speed * .9, vy: 0, life: 0, max: .6, s: 2.5, rot: 0, vr: 4, c: '#ffffff' });
+      if (R() < .15) { const pt = addPart(parts, 'star', x - 10, y + rnd(-14, 14), -speed * .9, 0, .6, 2.5); pt.rot = 0; pt.vr = 4; pt.c = '#ffffff'; }
       break;
   }
 }
@@ -34,25 +52,25 @@ function emitJumpFx(parts, id, phase, x, y, speed) {
   switch (id) {
     case 'confettis':
       for (let i = 0; i < (phase === 'jump' ? 8 : 10); i++) {
-        parts.push({ k: 'chunk', x: x + rnd(-10, 10), y: y - 4, vx: rnd(-140, 140) - speed * .4, vy: rnd(-260, -80), g: 700, drag: 1.5, life: 0, max: .8, s: 3 + R() * 3, rot: R() * 6, vr: rnd(-14, 14), c: pick(CONFETTI) });
+        { const pt = addPart(parts, 'chunk', x + rnd(-10, 10), y - 4, rnd(-140, 140) - speed * .4, rnd(-260, -80), .8, 3 + R() * 3); pt.g = 700; pt.drag = 1.5; pt.rot = R() * 6; pt.vr = rnd(-14, 14); pt.c = pick(CONFETTI); }
       }
       break;
     case 'notes':
       for (let i = 0; i < 3; i++) {
-        parts.push({ k: 'txt', text: pick(['♪', '♫', '♬']), x: x + rnd(-14, 14), y: y - 10, vx: rnd(-40, 40) - speed * .3, vy: rnd(-110, -60), life: 0, max: .9, s: 16 + R() * 6, c: pick(['#ffffff', '#ffe066', '#c98bff']) });
+        { const pt = addPart(parts, 'txt', x + rnd(-14, 14), y - 10, rnd(-40, 40) - speed * .3, rnd(-110, -60), .9, 16 + R() * 6); pt.text = pick(['♪', '♫', '♬']); pt.c = pick(['#ffffff', '#ffe066', '#c98bff']); }
       }
       break;
     case 'onde':
       if (phase === 'land') {
-        parts.push({ k: 'ring', x, y: y - 2, vx: -speed * .5, vy: 0, life: 0, max: .35, s: 10, c: '#ffffff' });
-        parts.push({ k: 'ring', x, y: y - 2, vx: -speed * .5, vy: 0, life: 0, max: .5, s: 4, c: '#7df9ff' });
+        addPart(parts, 'ring', x, y - 2, -speed * .5, 0, .35, 10).c = '#ffffff';
+        addPart(parts, 'ring', x, y - 2, -speed * .5, 0, .5, 4).c = '#7df9ff';
       } else {
-        parts.push({ k: 'ring', x, y: y - 2, vx: -speed * .5, vy: 0, life: 0, max: .3, s: 6, c: '#ffffff' });
+        addPart(parts, 'ring', x, y - 2, -speed * .5, 0, .3, 6).c = '#ffffff';
       }
       break;
     case 'eclairs':
       for (let i = 0; i < 3; i++) {
-        parts.push({ k: 'bolt', x: x + rnd(-16, 16), y: y - rnd(0, 10), vx: -speed * .5, vy: 0, life: 0, max: .25, s: 14 + R() * 10, seed: R() * 100 });
+        addPart(parts, 'bolt', x + rnd(-16, 16), y - rnd(0, 10), -speed * .5, 0, .25, 14 + R() * 10).seed = R() * 100;
       }
       break;
     case 'artifice':
@@ -61,7 +79,7 @@ function emitJumpFx(parts, id, phase, x, y, speed) {
         const col = pick(CONFETTI);
         for (let i = 0; i < n; i++) {
           const a = i / n * 6.283;
-          parts.push({ k: 'star', x, y: y - 16, vx: Math.cos(a) * 200 - speed * .4, vy: Math.sin(a) * 200 - 60, g: 300, drag: 2, life: 0, max: .7, s: 3.5, rot: 0, vr: 6, c: i % 2 ? col : '#ffffff' });
+          { const pt = addPart(parts, 'star', x, y - 16, Math.cos(a) * 200 - speed * .4, Math.sin(a) * 200 - 60, .7, 3.5); pt.g = 300; pt.drag = 2; pt.rot = 0; pt.vr = 6; pt.c = i % 2 ? col : '#ffffff'; }
         }
       }
       break;
@@ -72,9 +90,15 @@ function stepParts(parts, dt) {
   for (let i = parts.length - 1; i >= 0; i--) {
     const p = parts[i];
     p.life += dt;
-    if (p.life >= p.max) { parts.splice(i, 1); continue; }
+    if (p.life >= p.max) {
+      // Retrait en O(1) : on remplace par la dernière particule (l'ordre d'affichage importe peu)
+      parts[i] = parts[parts.length - 1];
+      parts.pop();
+      PART_POOL.push(p);
+      continue;
+    }
     p.x += p.vx * dt; p.y += p.vy * dt;
-    if (p.rot !== undefined) p.rot += (p.vr || 0) * dt;
+    p.rot += p.vr * dt;
     if (p.g) p.vy += p.g * dt;  // gravité propre à la particule
     if (p.drag) { p.vx *= 1 - p.drag * dt; p.vy *= 1 - p.drag * dt; }
   }

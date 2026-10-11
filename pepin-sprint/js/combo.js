@@ -64,7 +64,7 @@ let popStack = 0, popLastT = -9;
 function popText(text, x, y, color) {
   popStack = G.t - popLastT < .35 ? popStack + 1 : 0;
   popLastT = G.t;
-  G.parts.push({ k: 'txt', text, x, y: y - popStack * 18, vx: 0, vy: -55, life: 0, max: .9, s: 15, c: color || '#ffffff' });
+  { const pt = addPart(G.parts, 'txt', x, y - popStack * 18, 0, -55, .9, 15); pt.text = text; pt.c = color || '#ffffff'; }
 }
 
 // Suivi des obstacles : réussite quand l'obstacle est dépassé, « Frôlé ! » si on est passé très près

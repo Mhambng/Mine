@@ -123,6 +123,15 @@ const CONFIG = {
     },
   },
 
+  // Performance (js/quality.js)
+  perf: {
+    maxDpr: 2,             // résolution maximale (les écrans à 3x n'apportent rien ici et coûtent cher)
+    maxPixels: 1400000,    // nombre maximal de pixels dessinés par image
+    maxParticles: 260,
+    adaptive: true,        // baisse automatique de qualité si l'appareil rame
+    targetFps: 60,
+  },
+
   particles: {
     runDust: 0.22,     // probabilité par image d'un petit nuage sous les pieds
     landDust: 7,

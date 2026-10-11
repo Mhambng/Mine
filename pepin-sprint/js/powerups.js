@@ -24,9 +24,9 @@ function collectPowerUp(it) {
   showBanner(def.name + ' !', def.color);
   for (let i = 0; i < 12; i++) {
     const a = i / 12 * 6.283;
-    G.parts.push({ k: 'star', x: it.x, y: it.y, vx: Math.cos(a) * 220 - G.speed * .3, vy: Math.sin(a) * 220, drag: 3, life: 0, max: .5, s: 4, rot: 0, vr: 5, c: def.color });
+    { const pt = addPart(G.parts, 'star', it.x, it.y, Math.cos(a) * 220 - G.speed * .3, Math.sin(a) * 220, .5, 4); pt.drag = 3; pt.rot = 0; pt.vr = 5; pt.c = def.color; }
   }
-  G.parts.push({ k: 'ring', x: it.x, y: it.y, vx: -G.speed * .4, vy: 0, life: 0, max: .4, s: 16, c: def.color });
+  addPart(G.parts, 'ring', it.x, it.y, -G.speed * .4, 0, .4, 16).c = def.color;
   if (it.type === 'boost') Feel.shake(.25);
 }
 
@@ -82,7 +82,7 @@ function smash(o) {
   const b = BG[Biomes.current()];
   const col = o.k === 'bird' ? b.bird : b.obs;
   for (let i = 0; i < 12; i++) {
-    G.parts.push({ k: 'chunk', x: o.x + Math.random() * o.w, y: Math.max(o.y, GROUND - 60) + Math.random() * 40, vx: rnd(-80, 320), vy: rnd(-380, -120), g: 1100, life: 0, max: .8, s: 4 + Math.random() * 5, rot: Math.random() * 6, vr: rnd(-12, 12), c: col });
+    { const pt = addPart(G.parts, 'chunk', o.x + Math.random() * o.w, Math.max(o.y, GROUND - 60) + Math.random() * 40, rnd(-80, 320), rnd(-380, -120), .8, 4 + Math.random() * 5); pt.g = 1100; pt.rot = Math.random() * 6; pt.vr = rnd(-12, 12); pt.c = col; }
   }
   addPoints(CONFIG.combo.smashPoints, 'Boum !', '#ffd447');
   sfx.smash();

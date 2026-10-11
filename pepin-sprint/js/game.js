@@ -36,11 +36,12 @@ const G = {
 function resize() {
   const r = cv.getBoundingClientRect();
   if (!r.width || !r.height) return;
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const scale = Quality.renderScale(r.width, r.height);  // résolution adaptée à l'appareil
   W = Math.max(360, Math.round(H * r.width / r.height));
-  cv.width = Math.round(r.width * dpr);
-  cv.height = Math.round(r.height * dpr);
+  cv.width = Math.round(r.width * scale);
+  cv.height = Math.round(r.height * scale);
   ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+  cacheRes = Math.min(1.5, Math.round(cv.height / H * 4) / 4);  // résolution du cache du ciel
 }
 new ResizeObserver(resize).observe(cv);
 
@@ -90,7 +91,7 @@ function bodyColor() {
 }
 function dustBurst(n, spread = 14) {
   for (let i = 0; i < n; i++) {
-    G.parts.push({ k: 'dust', x: PX + rnd(-spread, spread), y: GROUND - 4, vx: rnd(-90, 50) - G.speed * .3, vy: rnd(-70, -20), life: 0, max: .4, s: 3 + Math.random() * 3 });
+    addPart(G.parts, 'dust', PX + rnd(-spread, spread), GROUND - 4, rnd(-90, 50) - G.speed * .3, rnd(-70, -20), .4, 3 + Math.random() * 3);
   }
 }
 function groundJump() {
@@ -111,7 +112,7 @@ function doubleJump() {
   G.jumps = 2; G.spin = 0;
   G.slideQueued = false;
   springStretch(G.spring, CONFIG.feel.squash.jumpStretch * .8);
-  for (let i = 0; i < 2; i++) G.parts.push({ k: 'puff', x: PX, y: G.py, vx: -G.speed * .5, vy: 0, life: 0, max: .35, s: 4 + i * 4 });
+  for (let i = 0; i < 2; i++) addPart(G.parts, 'puff', PX, G.py, -G.speed * .5, 0, .35, 4 + i * 4);
   emitJumpFx(G.parts, save.eq.jumpfx, 'jump', PX, G.py, G.speed);
   G.stats.jumps++;
   sfx.jump2();
@@ -214,10 +215,10 @@ function collectCoin(co) {
   G.lastCoinT = G.t;
   sfx.coin(G.coinChain);
   for (let i = 0; i < CONFIG.particles.coinSparks; i++) {
-    G.parts.push({ k: 'spark', x: co.x, y: co.y, vx: rnd(-140, 140) - G.speed * .4, vy: rnd(-240, -60), g: 600, life: 0, max: .45 });
+    addPart(G.parts, 'spark', co.x, co.y, rnd(-140, 140) - G.speed * .4, rnd(-240, -60), .45, 0).g = 600;
   }
-  G.parts.push({ k: 'ring', x: co.x, y: co.y, vx: -G.speed * .5, vy: 0, life: 0, max: .3, s: 8 });
-  G.parts.push({ k: 'txt', text: '+1', x: co.x, y: co.y - 14, vx: -G.speed * .35, vy: -70, life: 0, max: .6, s: 16, c: '#ffe066' });
+  addPart(G.parts, 'ring', co.x, co.y, -G.speed * .5, 0, .3, 8);
+  { const pt = addPart(G.parts, 'txt', co.x, co.y - 14, -G.speed * .35, -70, .6, 16); pt.text = '+1'; pt.c = '#ffe066'; }
 }
 
 function die() {
@@ -230,10 +231,10 @@ function die() {
   sfx.hit();
   const col = bodyColor();
   for (let i = 0; i < CONFIG.particles.deathChunks; i++) {
-    G.parts.push({ k: 'chunk', x: PX + rnd(-10, 10), y: G.py - S / 2 + rnd(-10, 10), vx: rnd(-260, 200), vy: rnd(-420, -120), g: 1100, life: 0, max: .9, s: 4 + Math.random() * 5, rot: Math.random() * 6, vr: rnd(-12, 12), c: col });
+    { const pt = addPart(G.parts, 'chunk', PX + rnd(-10, 10), G.py - S / 2 + rnd(-10, 10), rnd(-260, 200), rnd(-420, -120), .9, 4 + Math.random() * 5); pt.g = 1100; pt.rot = Math.random() * 6; pt.vr = rnd(-12, 12); pt.c = col; }
   }
   for (let i = 0; i < 5; i++) {
-    G.parts.push({ k: 'star', x: PX, y: G.py - S, vx: rnd(-80, 80), vy: rnd(-160, -60), g: 300, life: 0, max: .8, s: 5, rot: 0, vr: 6, c: '#ffe066' });
+    { const pt = addPart(G.parts, 'star', PX, G.py - S, rnd(-80, 80), rnd(-160, -60), .8, 5); pt.g = 300; pt.rot = 0; pt.vr = 6; pt.c = '#ffe066'; }
   }
   // Petit rebond en arrière
   G.vy = -520; G.ground = false;
@@ -259,6 +260,15 @@ function endRun() {
   renderShop();
   setTimeout(() => { if (G.state === 'over') showOverlay('over'); }, 650);
 }
+
+// Compaction en place : garde les éléments pour lesquels keep() renvoie true
+function compact(arr, keep) {
+  let j = 0;
+  for (let i = 0; i < arr.length; i++) if (keep(arr[i])) arr[j++] = arr[i];
+  arr.length = j;
+}
+function keepObstacle(o) { return o.x + o.w > -60 && !o.dead; }
+function keepCoin(co) { return co.x > -40 && !co.got; }
 
 // ---------- Mise à jour ----------
 function update(dt) {
@@ -325,7 +335,7 @@ function updatePlay(dt) {
     G.slideT += dt;
     G.slide -= dt;
     if (G.slideHeld && G.slideT < CONFIG.slide.maxHold) G.slide = Math.max(G.slide, .05);
-    if (Math.random() < .5) G.parts.push({ k: 'spark', x: PX - 6, y: GROUND - 2, vx: -G.speed * .6, vy: rnd(-90, -20), g: 500, life: 0, max: .3 });
+    if (Math.random() < .5) addPart(G.parts, 'spark', PX - 6, GROUND - 2, -G.speed * .6, rnd(-90, -20), .3, 0).g = 500;
     if (G.slide <= 0) { G.slide = 0; springStretch(G.spring, .12); }
   }
 
@@ -353,18 +363,19 @@ function updatePlay(dt) {
   for (const it of G.items) {
     if (!it.got && hit(cb, { x: it.x - 17, y: it.y - 17, w: 34, h: 34 })) collectPowerUp(it);
   }
-  G.obs = G.obs.filter(o => o.x + o.w > -60 && !o.dead);
-  G.coins = G.coins.filter(co => co.x > -40 && !co.got);
-  G.items = G.items.filter(it => it.x > -40 && !it.got);
+  // Retrait des éléments sortis de l'écran, sans créer de nouveau tableau
+  compact(G.obs, keepObstacle);
+  compact(G.coins, keepCoin);
+  compact(G.items, keepCoin);
 
   // Petite poussière sous les pieds, quel que soit le cosmétique équipé
   if (G.ground && G.slide <= 0 && Math.random() < CONFIG.particles.runDust) {
-    G.parts.push({ k: 'dust', x: PX - 10, y: GROUND - 2, vx: -G.speed * .5, vy: rnd(-40, -10), life: 0, max: .3, s: 2 + Math.random() * 2 });
+    addPart(G.parts, 'dust', PX - 10, GROUND - 2, -G.speed * .5, rnd(-40, -10), .3, 2 + Math.random() * 2);
   }
   // Traits de vitesse quand on va vite (et beaucoup en turbo)
   const sl = F.speedLines, ratio = Math.min(1, speedRatio() + G.boostK);
-  if (!reduceMotion && ratio > sl.from && Math.random() < sl.rate * (ratio - sl.from) / (1 - sl.from) * (1 + G.boostK * 2)) {
-    G.parts.push({ k: 'line', x: Feel.rightEdge(W, PX), y: rnd(20, GROUND - 20), vx: -G.speed * 2.4, vy: 0, life: 0, max: .6, s: rnd(30, 80) });
+  if (!reduceMotion && Quality.speedLines && ratio > sl.from && Math.random() < sl.rate * (ratio - sl.from) / (1 - sl.from) * (1 + G.boostK * 2)) {
+    addPart(G.parts, 'line', Feel.rightEdge(W, PX), rnd(20, GROUND - 20), -G.speed * 2.4, 0, .6, rnd(30, 80));
   }
   if (save.eq.trail === 'arcenciel') G.hist.push({ d: G.dist, y: G.py - S * .5 });
   emitTrail(G.parts, save.eq.trail, PX - S * .4, G.py - S * .5, G.ground, G.speed);
@@ -486,7 +497,7 @@ function render() {
   const b = BG[biome];
   ctx.save();
   Feel.apply(ctx, W, H, PX, GROUND);
-  if (G.state === 'menu') drawScene(ctx, W, H, biome, G.dist, G.t, GROUND);
+  if (G.state === 'menu') drawScene(ctx, W, H, biome, G.dist, G.t, GROUND, 1, true);
   else Biomes.draw(ctx, W, H, G.dist, G.t, GROUND);
   drawCoins(ctx);
   drawPowerUpItems(ctx);
@@ -510,8 +521,10 @@ function render() {
 
 let last = 0;
 function frame(now) {
-  const dt = Math.min(.033, (now - (last || now)) / 1000);
+  const rawDt = (now - (last || now)) / 1000;
+  const dt = Math.min(.033, rawDt);
   last = now;
+  if (G.state === 'play') Quality.sample(rawDt);
   if (Feel.freeze > 0) {
     // Micro-pause : on ne fait rien avancer, on redessine l'image figée
     Feel.freeze -= dt;
