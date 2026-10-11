@@ -1,4 +1,4 @@
-# NOVA — Boutique en ligne
+# KhayStore — Boutique en ligne
 
 Site e-commerce moderne et responsive (HTML / CSS / JavaScript, sans dépendance).
 
@@ -6,7 +6,7 @@ Site e-commerce moderne et responsive (HTML / CSS / JavaScript, sans dépendance
 - Page d'accueil animée (hero, avantages, catégories, offre avec compte à rebours, avis, newsletter)
 - Catalogue avec recherche, filtres par catégorie / promos et tri
 - Aperçu rapide des produits, favoris
-- Panier latéral sauvegardé dans le navigateur, codes promo (`NOVA10`, `BIENVENUE`), barre « livraison offerte »
+- Panier latéral sauvegardé dans le navigateur, codes promo (`KHAY10`, `BIENVENUE`), barre « livraison offerte »
 - Formulaire de commande (paiement à la livraison, Wave, Orange Money, carte), envoi optionnel de la commande sur WhatsApp
 - Adapté mobile, tablette et ordinateur
 

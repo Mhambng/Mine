@@ -1,5 +1,5 @@
 /* =========================================================
-   NOVA — Boutique en ligne
+   KhayStore — Boutique en ligne
    Modifiez le catalogue et les réglages ci-dessous.
    ========================================================= */
 
@@ -7,7 +7,7 @@ const SETTINGS = {
   currency: "FCFA",
   freeShippingFrom: 50000,
   shippingCost: 2000,
-  coupons: { NOVA10: 0.10, BIENVENUE: 0.15 },
+  coupons: { KHAY10: 0.10, BIENVENUE: 0.15 },
   // Mettez votre numéro WhatsApp (format international sans "+", ex. "221771234567")
   // pour recevoir les commandes directement sur WhatsApp. Laissez vide pour désactiver.
   whatsappNumber: "",
@@ -46,9 +46,9 @@ const store = {
   },
 };
 
-let cart = store.load("nova-cart", []);           // [{ id, qty }]
-let wishlist = store.load("nova-wishlist", []);   // [id]
-let coupon = store.load("nova-coupon", null);
+let cart = store.load("khay-cart", []);           // [{ id, qty }]
+let wishlist = store.load("khay-wishlist", []);   // [id]
+let coupon = store.load("khay-coupon", null);
 let activeFilter = "all";
 let searchTerm = "";
 let sortMode = "featured";
@@ -169,7 +169,7 @@ function openQuickView(id) {
 function toggleWishlist(id) {
   const has = wishlist.includes(id);
   wishlist = has ? wishlist.filter((w) => w !== id) : [...wishlist, id];
-  store.save("nova-wishlist", wishlist);
+  store.save("khay-wishlist", wishlist);
   toast(has ? "Retiré des favoris" : "❤️ Ajouté aux favoris");
   $$(`[data-wish="${id}"]`).forEach((b) => b.classList.toggle("active", !has));
   renderWishlist();
@@ -214,7 +214,7 @@ function removeFromCart(id) {
 }
 
 function saveCart() {
-  store.save("nova-cart", cart);
+  store.save("khay-cart", cart);
   renderCart();
 }
 
@@ -280,7 +280,7 @@ function submitOrder(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target));
   const t = totals();
-  const orderId = `NV-${Date.now().toString().slice(-6)}`;
+  const orderId = `KS-${Date.now().toString().slice(-6)}`;
 
   if (SETTINGS.whatsappNumber) {
     const lines = cart.map((l) => {
@@ -308,7 +308,7 @@ function submitOrder(e) {
 
   cart = [];
   coupon = null;
-  store.save("nova-coupon", null);
+  store.save("khay-coupon", null);
   saveCart();
 
   // Remet le formulaire en place pour la prochaine commande
@@ -335,10 +335,10 @@ function closeAll() {
 
 /* ---------- Compte à rebours ---------- */
 function startCountdown() {
-  let end = store.load("nova-promo-end", 0);
+  let end = store.load("khay-promo-end", 0);
   if (!end || end < Date.now()) {
     end = Date.now() + SETTINGS.promoEndsInDays * 864e5;
-    store.save("nova-promo-end", end);
+    store.save("khay-promo-end", end);
   }
   const pad = (n) => String(n).padStart(2, "0");
   const tick = () => {
@@ -412,7 +412,7 @@ $("#couponForm").addEventListener("submit", (e) => {
   const code = $("#couponInput").value.trim().toUpperCase();
   if (SETTINGS.coupons[code]) {
     coupon = code;
-    store.save("nova-coupon", coupon);
+    store.save("khay-coupon", coupon);
     toast(`✅ Code ${code} appliqué : -${SETTINGS.coupons[code] * 100} %`);
     $("#couponInput").value = "";
     renderCart();
@@ -424,7 +424,7 @@ $("#couponForm").addEventListener("submit", (e) => {
 $("#newsletterForm").addEventListener("submit", (e) => {
   e.preventDefault();
   e.target.reset();
-  toast("💌 Merci ! Vous êtes inscrit(e) au club NOVA.");
+  toast("💌 Merci ! Vous êtes inscrit(e) au club KhayStore.");
 });
 
 window.addEventListener("scroll", () => {
