@@ -1,0 +1,18 @@
+{
+  "appId": "com.mhambng.pepinsprint",
+  "appName": "Pépin Sprint",
+  "webDir": "../pepin-sprint",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 800,
+      "launchAutoHide": true,
+      "backgroundColor": "#1b1433",
+      "showSpinner": false
+    }
+  }
+}

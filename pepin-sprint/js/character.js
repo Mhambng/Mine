@@ -34,12 +34,15 @@ function bodyPath(c, kind, w, h, t) {
     if (c.roundRect) c.roundRect(-w / 2, -h, w, h - 3, [w * .5, w * .5, w * .3, w * .3]); else c.rect(-w / 2, -h, w, h - 3);
   }
 }
-function drawChar(c, x, y, s, t, eq, o = {}) {
+function drawChar(c, x, y, size, t, eq, o = {}) {
   const sk = find('skin', eq.skin);
   const run = o.run || 0;
-  const w = s, h = s;
+  // Le personnage est dessiné à sa taille de référence (44) puis mis à l'échelle :
+  // yeux, pieds et chapeaux gardent les mêmes proportions quelle que soit la taille.
+  const s = 44, w = s, h = s;
   c.save();
   c.translate(x, y);
+  c.scale(size / s, size / s);
   // Étirement / écrasement (ressort calculé dans feel.js), centré sous les pieds
   c.scale(o.sx || 1, o.sy || 1);
   if (sk.kind === 'ghost') c.translate(0, -6 + Math.sin(t * 4) * 3);

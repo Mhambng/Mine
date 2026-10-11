@@ -24,9 +24,11 @@ Les scripts sont chargés dans cet ordre par `index.html` :
 |---|---|
 | `js/config.js` | Tous les réglages |
 | `js/util.js` | Petits outils (DOM, hasard, formatage) |
+| `js/quality.js` | Qualité adaptative (résolution, nombre de particules) |
 | `js/catalog.js` | Cosmétiques et palettes des zones |
 | `js/save.js` | Sauvegarde locale versionnée (migration automatique des anciennes sauvegardes) |
 | `js/audio.js` | Sons synthétisés (provisoires) |
+| `js/music.js` | Musique de fond synthétisée |
 | `js/scene.js` | Dessin du décor |
 | `js/character.js` | Dessin du personnage et des chapeaux |
 | `js/particles.js` | Particules et traînées |
@@ -39,11 +41,37 @@ Les scripts sont chargés dans cet ordre par `index.html` :
 | `js/game.js` | Boucle de jeu, saut, glissade, collisions, rendu, HUD |
 | `js/ui.js` | Écrans d'accueil, de pause et de fin |
 | `js/input.js` | Clavier, souris, écran tactile |
+| `js/settings.js` | Réglages, panneaux du mode appli, bouton retour |
+| `js/native.js` | Intégration Capacitor : pause en arrière-plan, vibrations, mode plein écran |
+| `js/monetization.js` | MonetizationService + fournisseur de démonstration (web) |
+| `js/monetization-native.js` | Fournisseur natif : AdMob (réglages enfants) + RevenueCat |
 | `js/missions.js` | Missions du jour (3 par jour, renouvelées chaque jour, récompenses automatiques) |
 | `js/shop.js` | Boutique : vitrine du jour, achats avec confirmation |
+| `js/store-ui.js` | Porte parentale, deuxième chance, packs, achats, premier lancement |
 | `js/debug.js` | Panneau `#reglages` |
 | `js/main.js` | Démarrage |
 
 ## Fichier unique
 
 `python3 tools/bundle.py` regroupe tout dans `dist/pepin-sprint.html`, un fichier autonome facile à partager.
+
+## Application mobile
+
+Le jeu est empaqueté pour Android avec Capacitor dans `../app/`. Toute la documentation est dans `../docs/` :
+
+- `compiler-android.md` : compiler, tester, signer, remplacer les identifiants de test ;
+- `publication-google-play.md` : checklist complète de mise en ligne ;
+- `politique-de-confidentialite.md` : modèle de politique de confidentialité ;
+- `fiche-store.md` : textes de la fiche Google Play.
+
+Sur un téléphone tenu en paysage (ou dans l'application), le jeu passe en plein écran. Missions, boutique et réglages s'ouvrent alors en panneaux.
+
+## Monétisation
+
+Tout passe par `Monetization` (`js/monetization.js`). Sur le web, un fournisseur de démonstration simule la pub et les achats, sans aucun paiement. Règles appliquées :
+
+- pubs récompensées uniquement, choisies par le joueur, non personnalisées ;
+- aucune récompense aléatoire payante, aucune monnaie vendue ;
+- prix affichés en vraie monnaie ;
+- porte parentale avant chaque achat ;
+- échec propre sans réseau.

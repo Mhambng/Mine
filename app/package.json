@@ -1,0 +1,23 @@
+{
+  "name": "pepin-sprint-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pépin Sprint empaqueté pour Android et iOS avec Capacitor",
+  "scripts": {
+    "sync": "cap sync",
+    "android": "cap sync android && cap open android",
+    "ios": "cap sync ios && cap open ios",
+    "icons": "node ../tools/make-icons.js"
+  },
+  "dependencies": {
+    "@capacitor-community/admob": "^8.2.1",
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4",
+    "@revenuecat/purchases-capacitor": "^13.7.3"
+  }
+}
