@@ -188,8 +188,8 @@ h1, h2, h3 { font-family: "Playfair Display", Georgia, serif; line-height: 1.15;
   position: relative; aspect-ratio: 1 / 1; display: grid; place-items: center;
   font-size: 6rem; cursor: pointer; overflow: hidden;
 }
-.card__media span { transition: transform .5s var(--ease); }
-.card:hover .card__media span { transform: scale(1.15); }
+.card__visual { width: 100%; height: 100%; display: grid; place-items: center; transition: transform .5s var(--ease); }
+.card:hover .card__visual { transform: scale(1.15); }
 .card__tag {
   position: absolute; top: 14px; left: 14px; padding: 5px 12px; border-radius: 999px;
   font-size: .75rem; font-weight: 700; background: var(--primary); color: #fff;
@@ -413,3 +413,8 @@ h1, h2, h3 { font-family: "Playfair Display", Georgia, serif; line-height: 1.15;
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ============ Photos produits ============ */
+.card__tag, .card__wish, .card__quick { z-index: 1; }
+.card__media img, .quickview__media img, .line__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.quickview__media, .line__img { overflow: hidden; }

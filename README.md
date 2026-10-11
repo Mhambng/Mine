@@ -19,5 +19,11 @@ Tout se règle en haut de `script.js` :
 - `CATEGORIES` et `PRODUCTS` : votre catalogue
 - Couleurs : variables CSS au début de `styles.css`
 
+## Ajouter les photos des produits
+1. Déposez les photos dans le dossier `images/` (format carré conseillé, ex. 800 × 800 px, en .jpg ou .webp).
+2. Dans `script.js`, ajoutez `img: "images/nom-du-fichier.jpg"` au produit concerné.
+
+Sans photo, ou si le fichier est introuvable, l'émoji du produit s'affiche à la place.
+
 ## Mettre en ligne gratuitement
 Sur GitHub : **Settings → Pages → Branch** puis choisissez la branche et le dossier racine.

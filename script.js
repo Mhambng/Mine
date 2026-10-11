@@ -21,6 +21,8 @@ const CATEGORIES = [
   { id: "maison",      name: "Maison",      desc: "Déco & art de vivre",   emoji: "🪴", bg: "linear-gradient(135deg,#4f7a65,#2d4a3e)" },
 ];
 
+// Photos : placez vos images dans le dossier "images/" puis ajoutez
+// img: "images/nom-du-fichier.jpg" au produit. Sans photo, l'émoji s'affiche.
 const PRODUCTS = [
   { id: 1,  name: "Robe Wax Élégance",      cat: "mode",        price: 28000, old: 38000, rating: 4.9, reviews: 128, emoji: "👗", bg: "#f7e1d7", tag: "promo", desc: "Robe mi-longue en tissu wax 100 % coton, coupe fluide et ceinture assortie. Idéale pour les cérémonies comme pour le quotidien." },
   { id: 2,  name: "Sac Cuir Signature",     cat: "accessoires", price: 45000, old: 64000, rating: 5.0, reviews: 96,  emoji: "👜", bg: "#f3e3c9", tag: "promo", desc: "Sac à main en cuir véritable, finitions cousues main, grande contenance et bandoulière amovible." },
@@ -59,6 +61,9 @@ const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const money = (n) => `${Math.round(n).toLocaleString("fr-FR")} ${SETTINGS.currency}`;
 const findProduct = (id) => PRODUCTS.find((p) => p.id === id);
 const stars = (r) => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r));
+const visual = (p) => p.img
+  ? `<img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.replaceWith(document.createTextNode('${p.emoji}'))">`
+  : p.emoji;
 const heartSvg = `<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.2 3.3 4.5 7 4.5c2 0 3.5 1.1 5 3 1.5-1.9 3-3 5-3 3.7 0 6 3.7 4.5 7.3C19.5 16.4 12 21 12 21z"/></svg>`;
 
 let toastTimer;
@@ -117,7 +122,7 @@ function productCard(p, i) {
     <article class="card" style="animation-delay:${i * 50}ms">
       <div class="card__media" style="background:${p.bg}" data-view="${p.id}">
         ${tag}
-        <span>${p.emoji}</span>
+        <span class="card__visual">${visual(p)}</span>
         <button class="card__wish${wishlist.includes(p.id) ? " active" : ""}" data-wish="${p.id}" aria-label="Ajouter aux favoris">${heartSvg}</button>
         <button class="card__quick" data-view="${p.id}">Aperçu rapide</button>
       </div>
@@ -143,7 +148,7 @@ function openQuickView(id) {
   const p = findProduct(id);
   $("#productModalContent").innerHTML = `
     <div class="quickview">
-      <div class="quickview__media" style="background:${p.bg}">${p.emoji}</div>
+      <div class="quickview__media" style="background:${p.bg}">${visual(p)}</div>
       <div>
         <span class="eyebrow">${CATEGORIES.find((c) => c.id === p.cat).name}</span>
         <h3>${p.name}</h3>
@@ -182,7 +187,7 @@ function renderWishlist() {
   $("#wishlistItems").innerHTML = wishlist.length
     ? wishlist.map(findProduct).filter(Boolean).map((p) => `
         <div class="line">
-          <div class="line__img" style="background:${p.bg}">${p.emoji}</div>
+          <div class="line__img" style="background:${p.bg}">${visual(p)}</div>
           <div><p class="line__title">${p.name}</p><p class="line__price">${money(p.price)}</p></div>
           <div class="line__side">
             <button class="btn btn--small" data-add="${p.id}">Ajouter</button>
@@ -238,7 +243,7 @@ function renderCart() {
         const p = findProduct(l.id);
         return `
         <div class="line">
-          <div class="line__img" style="background:${p.bg}">${p.emoji}</div>
+          <div class="line__img" style="background:${p.bg}">${visual(p)}</div>
           <div>
             <p class="line__title">${p.name}</p>
             <p class="line__price">${money(p.price)}</p>
