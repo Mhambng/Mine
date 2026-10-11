@@ -36,15 +36,58 @@ const CONFIG = {
     menu: 120,        // vitesse du décor sur l'écran d'accueil
   },
 
-  // Apparition des obstacles (sera remplacé par les séquences de la phase 2)
-  spawn: {
-    firstGap: 420,
-    gapSeconds: 0.85,      // écart minimum, en secondes de course
-    gapRandomSeconds: 0.8, // écart aléatoire ajouté
-    gapExtra: 150,
-    birdFromScore: 120,
-    birdChance: 0.28,
-    tripleSpikeFromScore: 300,
+  // Contrôles tactiles
+  input: {
+    swipePx: 26,  // distance (en pixels d'écran) pour qu'un glissement vers le bas compte comme une glissade
+  },
+
+  // Glissade (flèche du bas, S, ou glisser le doigt vers le bas)
+  slide: {
+    duration: 0.8,      // s : durée d'une glissade
+    maxHold: 1.6,       // s : durée maximale si on garde la touche enfoncée
+    fastFall: 1150,     // vitesse de chute quand on demande une glissade en l'air
+    height: 22,         // hauteur du personnage pendant la glissade (debout : 44)
+  },
+
+  // Séquences d'obstacles et alternance calme / intense (js/patterns.js, js/difficulty.js)
+  zones: {
+    firstGap: 1.4,           // s avant le premier obstacle
+    firstCalm: 6,            // s : la partie commence par une zone calme
+    calmSeconds: 7,
+    intenseSeconds: 14,
+    calmRest: [0.9, 1.4],    // s de pause entre deux séquences en zone calme
+    intenseRest: [0.35, 0.6],
+    intenseSpeedBonus: 0.06, // +6 % de vitesse en zone intense
+    // Difficulté maximale des séquences selon la distance (mètres -> niveau 1 à 3)
+    tierByMeters: [[0, 1], [300, 2], [900, 3]],
+    calmMaxTier: 1,
+  },
+
+  // Power-ups (js/powerups.js)
+  powerups: {
+    perCalmZone: 1,           // un power-up offert dans chaque zone calme
+    intenseChance: 0.08,      // petite chance d'en voir un en zone intense
+    magnet: { duration: 8, radius: 190, pull: 1100 },
+    shield: { duration: 15 },
+    boost: { duration: 4, speedBonus: 0.6, graceAfter: 1.2 },
+    invulnAfterHit: 1.0,      // s d'invincibilité après que le bouclier a absorbé un choc
+  },
+
+  // Combo et multiplicateur de score (js/combo.js)
+  combo: {
+    stepsPerLevel: 3,   // 3 réussites d'affilée = multiplicateur +1
+    maxMultiplier: 5,
+    nearMissPx: 14,     // frôler un obstacle à moins de 14 px compte comme une réussite
+    nearMissPoints: 20,
+    seriesPoints: 10,   // bonus quand on ramasse toute une série de pièces
+    smashPoints: 25,    // obstacle détruit avec le boost ou le bouclier
+  },
+
+  // Zones qui défilent pendant la course (js/biomes.js)
+  biomes: {
+    every: 600,  // mètres entre deux changements de zone
+    fade: 1.5,   // s de fondu entre deux zones
+    order: ['crepuscule', 'foret', 'ocean', 'neige', 'cosmos'],
   },
 
   // Sensations

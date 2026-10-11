@@ -66,6 +66,18 @@ const sfx = {
   pause: () => beep(660, 440, .1, 'triangle', .04),
   resume: () => beep(440, 660, .1, 'triangle', .04),
   click: () => beep(900, 700, .04, 'triangle', .03),
+  slide: () => { noise(.18, .05, 2200); beep(300, 180, .12, 'triangle', .03); },
+  zone: intense => intense
+    ? [392, 523, 659].forEach((f, i) => beep(f, f * 1.01, .12, 'square', .03, i * .07))
+    : [659, 523].forEach((f, i) => beep(f, f, .16, 'sine', .04, i * .1)),
+  biome: () => [523, 784, 1047].forEach((f, i) => beep(f, f, .2, 'sine', .035, i * .12)),
+  power: () => [523, 659, 784, 1047, 1319].forEach((f, i) => beep(f, f, .08, 'square', .03, i * .045)),
+  powerEnd: () => beep(660, 330, .2, 'triangle', .04),
+  shieldBreak: () => { noise(.2, .1, 4000); beep(900, 200, .25, 'square', .035); },
+  smash: () => { noise(.15, .09, 1500); beep(200, 90, .12, 'square', .04); },
+  combo: m => { const f = 440 * Math.pow(2, (m * 2) / 12); beep(f, f * 1.5, .15, 'square', .035); beep(f * 1.5, f * 2, .15, 'square', .03, .08); },
+  comboLost: () => beep(400, 200, .18, 'triangle', .035),
+  nearMiss: () => { noise(.1, .04, 6000); beep(1200, 1800, .07, 'sine', .03); },
   buy: () => { beep(523, 523, .1, 'triangle', .05); beep(659, 659, .1, 'triangle', .05, .1); beep(784, 784, .18, 'triangle', .05, .2); },
   chest: () => { [523, 659, 784, 1047].forEach((f, i) => beep(f, f, .14, 'triangle', .05, i * .09)); },
 };

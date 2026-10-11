@@ -10,6 +10,8 @@ function boot(data) {
   renderShop();
   showOverlay('menu');
   setupDebugPanel();
+  // Message unique (par exemple : remboursement des anciens décors)
+  if (save.notice) { toast(save.notice, 6000); save.notice = null; persist(); }
   requestAnimationFrame(frame);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderShop());
 }

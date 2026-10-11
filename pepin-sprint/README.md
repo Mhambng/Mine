@@ -7,7 +7,8 @@ Runner infini en HTML/JavaScript, sans dépendance ni étape de compilation.
 Ouvre `index.html` dans un navigateur, par un simple double-clic.
 
 - Espace, flèche du haut, W ou toucher l'écran : sauter. On peut faire un double saut. Garder appuyé fait sauter plus haut.
-- P ou Échap : pause.
+- Flèche du bas, S ou glisser le doigt vers le bas : glissade (en l'air : plongeon puis glissade).
+- P ou Échap : pause. Le jeu se met aussi en pause tout seul quand la page passe en arrière-plan.
 
 ## Régler le jeu
 
@@ -30,7 +31,14 @@ Les scripts sont chargés dans cet ordre par `index.html` :
 | `js/character.js` | Dessin du personnage et des chapeaux |
 | `js/particles.js` | Particules et traînées |
 | `js/feel.js` | Tremblement, micro-pause, caméra, ressort d'étirement |
-| `js/game.js` | Boucle de jeu, saut, obstacles, rendu, contrôles |
+| `js/patterns.js` | Séquences d'obstacles conçues à la main (placées dans le temps, en secondes) |
+| `js/difficulty.js` | Alternance zones calmes / intenses, choix de la séquence suivante |
+| `js/powerups.js` | Aimant, bouclier, turbo |
+| `js/combo.js` | Combo, multiplicateur, « Frôlé ! », « Série ! » |
+| `js/biomes.js` | Zones traversées pendant la course (changement tous les 600 m) |
+| `js/game.js` | Boucle de jeu, saut, glissade, collisions, rendu, HUD |
+| `js/ui.js` | Écrans d'accueil, de pause et de fin |
+| `js/input.js` | Clavier, souris, écran tactile |
 | `js/shop.js` | Boutique |
 | `js/debug.js` | Panneau `#reglages` |
 | `js/main.js` | Démarrage |

@@ -20,8 +20,10 @@ function hills(c, w, gy, off, base, amp, freq, color) {
   c.fill();
 }
 
-function drawScene(c, w, h, bgId, scroll, t, gy) {
+// alpha < 1 : sert au fondu entre deux zones (voir biomes.js)
+function drawScene(c, w, h, bgId, scroll, t, gy, alpha = 1) {
   const b = BG[bgId] || BG.crepuscule;
+  c.globalAlpha = alpha;
   const k = h / 320;
   const sky = c.createLinearGradient(0, 0, 0, gy);
   sky.addColorStop(0, b.sky[0]);
@@ -34,11 +36,11 @@ function drawScene(c, w, h, bgId, scroll, t, gy) {
   if (b.deco === 'stars') {
     for (const d of DECO) {
       const x = ((d.x * w - scroll * .02) % w + w) % w;
-      c.globalAlpha = .35 + .65 * Math.abs(Math.sin(t * 1.5 + d.p));
+      c.globalAlpha = alpha * (.35 + .65 * Math.abs(Math.sin(t * 1.5 + d.p)));
       c.fillStyle = b.decoC;
       c.fillRect(x, d.y * gy * .75, 1 + d.s * 1.6 * k, 1 + d.s * 1.6 * k);
     }
-    c.globalAlpha = 1;
+    c.globalAlpha = alpha;
   }
 
   // Soleil, lune ou planète
@@ -79,13 +81,13 @@ function drawScene(c, w, h, bgId, scroll, t, gy) {
   c.fillStyle = b.top;
   c.fillRect(-M, gy, w + 2 * M, 6 * k);
   c.fillStyle = b.obsHi;
-  c.globalAlpha = .35;
+  c.globalAlpha = alpha * .35;
   const step = 46 * k;
   for (let x = -M - (scroll % step); x < w + M; x += step) {
     c.fillRect(x, gy + 16 * k, 14 * k, 3 * k);
     c.fillRect(x + step * .5, gy + 30 * k, 8 * k, 3 * k);
   }
-  c.globalAlpha = 1;
+  c.globalAlpha = alpha;
 
   // Décor proche
   if (b.deco === 'snow') {
@@ -106,4 +108,5 @@ function drawScene(c, w, h, bgId, scroll, t, gy) {
       c.restore();
     }
   }
+  c.globalAlpha = 1;
 }

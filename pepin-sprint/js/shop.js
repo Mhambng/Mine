@@ -8,10 +8,23 @@ function renderPreview(cv, cat, id, w = 200, h = 150) {
   const c = cv.getContext('2d');
   c.setTransform(dpr, 0, 0, dpr, 0, 0);
   const eq = { ...save.eq, [cat]: id };
+  const bg = 'crepuscule';  // les aperçus utilisent toujours la même zone
   const gy = h * .8;
-  drawScene(c, w, h, eq.bg, 60, 1.2, gy);
+  drawScene(c, w, h, bg, 60, 1.2, gy);
   const px = cat === 'trail' ? w * .66 : w / 2;
   const s = h * .32;
+  if (cat === 'jumpfx') {
+    // Aperçu d'un effet de saut : Pépin en l'air au-dessus de l'effet de réception
+    const parts = [];
+    emitJumpFx(parts, id, 'land', px, gy, 0);
+    if (id === 'classique') for (let i = 0; i < 6; i++) parts.push({ k: 'dust', x: px + rnd(-16, 16), y: gy - 3, vx: rnd(-40, 40), vy: rnd(-40, -10), life: 0, max: .5, s: 3 + Math.random() * 3 });
+    for (let i = 0; i < 9; i++) stepParts(parts, 1 / 60);
+    emitJumpFx(parts, id, 'jump', px, gy, 0);
+    for (let i = 0; i < 4; i++) stepParts(parts, 1 / 60);
+    drawParts(c, parts, bg);
+    drawChar(c, px, gy - s * .9, s, 1.0, eq, { air: true, sx: .9, sy: 1.12 });
+    return;
+  }
   if (cat === 'trail') {
     const parts = [], hist = [];
     let d = 0;
@@ -24,7 +37,7 @@ function renderPreview(cv, cat, id, w = 200, h = 150) {
       hist.push({ d, y });
     }
     if (id === 'arcenciel') drawRainbow(c, hist, px - s * .3, d);
-    drawParts(c, parts, eq.bg);
+    drawParts(c, parts, bg);
   }
   drawChar(c, px, gy, s, 1.0, eq, { run: .7 });
 }
@@ -52,7 +65,7 @@ const CHEST_PRICE = 200;
 
 function updateStats() {
   $('coins').textContent = fmt(save.coins);
-  $('best').textContent = fmt(save.best) + ' m';
+  $('best').textContent = fmt(save.best) + ' pts';
   $('mute').textContent = save.muted ? 'Son : non' : 'Son : oui';
 }
 function renderTabs() {
@@ -126,12 +139,12 @@ $('grid').addEventListener('click', e => {
 });
 
 let toastTimer = 0;
-function toast(msg) {
+function toast(msg, ms = 1800) {
   const el = $('toast');
   el.textContent = msg;
   el.hidden = false;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.hidden = true; }, 1800);
+  toastTimer = setTimeout(() => { el.hidden = true; }, ms);
 }
 
 // Coffre mystère

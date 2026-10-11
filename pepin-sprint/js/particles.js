@@ -26,6 +26,48 @@ function emitTrail(parts, id, x, y, onGround, speed) {
       break;
   }
 }
+// Effets de saut (cosmétique) : phase = 'jump' au décollage, 'land' à la réception.
+// x, y = position des pieds.
+const CONFETTI = ['#ff5e7e', '#ffd447', '#5fd3a6', '#6cc0ff', '#c98bff'];
+function emitJumpFx(parts, id, phase, x, y, speed) {
+  const R = Math.random;
+  switch (id) {
+    case 'confettis':
+      for (let i = 0; i < (phase === 'jump' ? 8 : 10); i++) {
+        parts.push({ k: 'chunk', x: x + rnd(-10, 10), y: y - 4, vx: rnd(-140, 140) - speed * .4, vy: rnd(-260, -80), g: 700, drag: 1.5, life: 0, max: .8, s: 3 + R() * 3, rot: R() * 6, vr: rnd(-14, 14), c: pick(CONFETTI) });
+      }
+      break;
+    case 'notes':
+      for (let i = 0; i < 3; i++) {
+        parts.push({ k: 'txt', text: pick(['♪', '♫', '♬']), x: x + rnd(-14, 14), y: y - 10, vx: rnd(-40, 40) - speed * .3, vy: rnd(-110, -60), life: 0, max: .9, s: 16 + R() * 6, c: pick(['#ffffff', '#ffe066', '#c98bff']) });
+      }
+      break;
+    case 'onde':
+      if (phase === 'land') {
+        parts.push({ k: 'ring', x, y: y - 2, vx: -speed * .5, vy: 0, life: 0, max: .35, s: 10, c: '#ffffff' });
+        parts.push({ k: 'ring', x, y: y - 2, vx: -speed * .5, vy: 0, life: 0, max: .5, s: 4, c: '#7df9ff' });
+      } else {
+        parts.push({ k: 'ring', x, y: y - 2, vx: -speed * .5, vy: 0, life: 0, max: .3, s: 6, c: '#ffffff' });
+      }
+      break;
+    case 'eclairs':
+      for (let i = 0; i < 3; i++) {
+        parts.push({ k: 'bolt', x: x + rnd(-16, 16), y: y - rnd(0, 10), vx: -speed * .5, vy: 0, life: 0, max: .25, s: 14 + R() * 10, seed: R() * 100 });
+      }
+      break;
+    case 'artifice':
+      if (phase === 'land' || phase === 'jump') {
+        const n = phase === 'land' ? 16 : 10;
+        const col = pick(CONFETTI);
+        for (let i = 0; i < n; i++) {
+          const a = i / n * 6.283;
+          parts.push({ k: 'star', x, y: y - 16, vx: Math.cos(a) * 200 - speed * .4, vy: Math.sin(a) * 200 - 60, g: 300, drag: 2, life: 0, max: .7, s: 3.5, rot: 0, vr: 6, c: i % 2 ? col : '#ffffff' });
+        }
+      }
+      break;
+  }
+}
+
 function stepParts(parts, dt) {
   for (let i = parts.length - 1; i >= 0; i--) {
     const p = parts[i];
@@ -88,6 +130,13 @@ function drawParts(c, parts, bgId) {
         c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 2;
         c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x + p.s, p.y); c.stroke();
         break;
+      case 'bolt': { // petit éclair en zigzag
+        c.strokeStyle = '#fff6a8'; c.lineWidth = 2.5; c.lineJoin = 'round';
+        c.beginPath(); c.moveTo(p.x, p.y);
+        for (let i = 1; i <= 4; i++) c.lineTo(p.x + Math.sin(p.seed + i * 2.1) * 6, p.y - i * p.s / 4);
+        c.stroke();
+        break;
+      }
       case 'puff':
         c.strokeStyle = '#ffffff'; c.lineWidth = 2;
         c.beginPath(); c.arc(p.x, p.y, p.s + (1 - a) * 18, 0, 6.283); c.stroke();

@@ -77,9 +77,8 @@ function springSquash(sp, amount) {    // amount > 0 : écrasé
   sp.sx = 1 + amount * .9;
   sp.vx = 0; sp.vy = 0;
 }
-function springUpdate(sp, dt, targetY) {
+function springUpdate(sp, dt, targetY, targetX = 1 / targetY) {
   const q = CONFIG.feel.squash;
-  const targetX = 1 / targetY;
   sp.vx += (q.stiffness * (targetX - sp.sx) - q.damping * sp.vx) * dt;
   sp.vy += (q.stiffness * (targetY - sp.sy) - q.damping * sp.vy) * dt;
   sp.sx += sp.vx * dt;

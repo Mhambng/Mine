@@ -1,13 +1,19 @@
-// Sauvegarde locale de la progression (pièces, record, objets possédés et équipés).
+// Sauvegarde locale de la progression (pièces, record, objets possédés et équipés, réglages).
+// La sauvegarde porte un numéro de version : quand le format change, normalize() migre l'ancienne
+// sauvegarde au lieu de l'effacer.
 'use strict';
 
-// ---------- Sauvegarde ----------
-const KEY = 'pepin-sprint-v1';
+const KEY = 'pepin-sprint-v1';        // clé conservée pour ne pas perdre les anciennes parties
+const SAVE_VERSION = 2;
+
 const DEF = () => ({
-  coins: 0, best: 0, muted: false,
-  owned: { skin: ['pepin'], hat: ['aucun'], trail: ['poussiere'], bg: ['crepuscule'] },
-  eq: { skin: 'pepin', hat: 'aucun', trail: 'poussiere', bg: 'crepuscule' },
+  version: SAVE_VERSION,
+  coins: 0, best: 0, bestMeters: 0, muted: false,
+  owned: { skin: ['pepin'], hat: ['aucun'], trail: ['poussiere'], jumpfx: ['classique'] },
+  eq: { skin: 'pepin', hat: 'aucun', trail: 'poussiere', jumpfx: 'classique' },
+  notice: null,  // message à afficher une fois au joueur (par exemple un remboursement)
 });
+
 function normalize(s) {
   const d = DEF();
   if (!s || typeof s !== 'object') return d;
@@ -20,7 +26,21 @@ function normalize(s) {
   }
   out.coins = Math.max(0, Math.floor(+s.coins || 0));
   out.best = Math.max(0, Math.floor(+s.best || 0));
+  out.bestMeters = Math.max(0, Math.floor(+s.bestMeters || 0));
   out.muted = !!s.muted;
+
+  // Migration v1 -> v2 : les décors deviennent des zones gratuites.
+  // Les décors achetés sont remboursés au prix payé.
+  if (!s.version || s.version < 2) {
+    const bought = Array.isArray(s.owned?.bg) ? s.owned.bg : [];
+    const refund = bought.reduce((sum, id) => sum + (LEGACY_BG_PRICES[id] || 0), 0);
+    if (refund > 0) {
+      out.coins += refund;
+      out.notice = `Les décors sont maintenant gratuits pendant la course. Tes ${refund} pièces ont été remboursées.`;
+    }
+    out.bestMeters = out.bestMeters || out.best; // avant, le record était en mètres
+  }
+  out.version = SAVE_VERSION;
   return out;
 }
 function load() {
