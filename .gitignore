@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# Fichier regroupé généré par tools/bundle.py
+dist/
