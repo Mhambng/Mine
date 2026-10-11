@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA — Concept Store</title>
+  <meta name="description" content="NOVA, la boutique en ligne de mode, beauté et maison. Livraison rapide, paiement sécurisé.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Bandeau promo -->
+  <div class="topbar">
+    <p>🚚 Livraison offerte dès 50 000 FCFA · Code <strong>NOVA10</strong> = -10 % sur votre première commande</p>
+  </div>
+
+  <!-- En-tête -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+
+      <a href="#" class="logo">NOVA<span>.</span></a>
+
+      <nav class="nav" id="nav">
+        <a href="#accueil">Accueil</a>
+        <a href="#categories">Catégories</a>
+        <a href="#boutique">Boutique</a>
+        <a href="#offre">Offres</a>
+        <a href="#avis">Avis</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="header__actions">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="searchInput" placeholder="Rechercher un produit…" aria-label="Rechercher">
+        </div>
+        <button class="icon-btn" id="wishlistBtn" aria-label="Favoris">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.2 3.3 4.5 7 4.5c2 0 3.5 1.1 5 3 1.5-1.9 3-3 5-3 3.7 0 6 3.7 4.5 7.3C19.5 16.4 12 21 12 21z"/></svg>
+          <span class="badge" id="wishlistCount">0</span>
+        </button>
+        <button class="icon-btn" id="cartBtn" aria-label="Panier">
+          <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+          <span class="badge" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="accueil">
+      <div class="container hero__inner">
+        <div class="hero__text reveal">
+          <span class="eyebrow">Nouvelle collection 2026</span>
+          <h1>Le style qui vous <em>ressemble</em>, livré chez vous.</h1>
+          <p>Mode, beauté, maison et accessoires sélectionnés avec soin. Des pièces uniques à prix justes, livrées en 24 à 72 h.</p>
+          <div class="hero__cta">
+            <a href="#boutique" class="btn btn--primary">Découvrir la boutique</a>
+            <a href="#offre" class="btn btn--ghost">Voir les offres</a>
+          </div>
+          <ul class="hero__stats">
+            <li><strong>12k+</strong><span>Clients satisfaits</span></li>
+            <li><strong>4,9/5</strong><span>Note moyenne</span></li>
+            <li><strong>48 h</strong><span>Livraison moyenne</span></li>
+          </ul>
+        </div>
+        <div class="hero__visual reveal">
+          <div class="blob"></div>
+          <div class="hero__card hero__card--main">
+            <span class="hero__emoji">👜</span>
+            <div>
+              <p class="hero__card-title">Sac Cuir Signature</p>
+              <p class="hero__card-price">45 000 FCFA</p>
+            </div>
+          </div>
+          <div class="hero__card hero__card--float1"><span>⭐</span> Best-seller</div>
+          <div class="hero__card hero__card--float2"><span>🔥</span> -30 % aujourd'hui</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Avantages -->
+    <section class="perks">
+      <div class="container perks__grid">
+        <div class="perk"><span>🚚</span><div><strong>Livraison rapide</strong><p>Partout en 24 à 72 h</p></div></div>
+        <div class="perk"><span>🔒</span><div><strong>Paiement sécurisé</strong><p>Wave, Orange Money, carte</p></div></div>
+        <div class="perk"><span>↩️</span><div><strong>Retours faciles</strong><p>14 jours pour changer d'avis</p></div></div>
+        <div class="perk"><span>💬</span><div><strong>Service client</strong><p>7 j/7 sur WhatsApp</p></div></div>
+      </div>
+    </section>
+
+    <!-- Catégories -->
+    <section class="section" id="categories">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">Explorer</span>
+          <h2>Nos catégories</h2>
+        </div>
+        <div class="categories" id="categoriesGrid"></div>
+      </div>
+    </section>
+
+    <!-- Boutique -->
+    <section class="section section--alt" id="boutique">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">Boutique</span>
+          <h2>Nos produits du moment</h2>
+        </div>
+
+        <div class="toolbar">
+          <div class="filters" id="filters"></div>
+          <select id="sortSelect" aria-label="Trier les produits">
+            <option value="featured">Tendances</option>
+            <option value="price-asc">Prix croissant</option>
+            <option value="price-desc">Prix décroissant</option>
+            <option value="rating">Mieux notés</option>
+          </select>
+        </div>
+
+        <div class="products" id="productsGrid"></div>
+        <p class="empty" id="emptyState" hidden>Aucun produit ne correspond à votre recherche. 🔍</p>
+      </div>
+    </section>
+
+    <!-- Offre limitée -->
+    <section class="section" id="offre">
+      <div class="container">
+        <div class="promo reveal">
+          <div class="promo__text">
+            <span class="eyebrow eyebrow--light">Offre limitée</span>
+            <h2>Jusqu'à -40 % sur la collection Été</h2>
+            <p>Profitez de nos meilleurs prix avant la fin du compte à rebours.</p>
+            <div class="countdown" id="countdown">
+              <div><strong id="cdDays">00</strong><span>Jours</span></div>
+              <div><strong id="cdHours">00</strong><span>Heures</span></div>
+              <div><strong id="cdMinutes">00</strong><span>Min</span></div>
+              <div><strong id="cdSeconds">00</strong><span>Sec</span></div>
+            </div>
+            <a href="#boutique" class="btn btn--light" data-filter-link="promo">J'en profite</a>
+          </div>
+          <div class="promo__visual">
+            <span>🕶️</span><span>👗</span><span>👟</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Avis -->
+    <section class="section section--alt" id="avis">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="eyebrow">Témoignages</span>
+          <h2>Ils nous font confiance</h2>
+        </div>
+        <div class="reviews">
+          <article class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>« Livraison ultra rapide et les produits sont encore plus beaux qu'en photo. Je recommande à 100 % ! »</p>
+            <div class="review__author"><span class="avatar">AD</span><div><strong>Aïssatou D.</strong><small>Dakar</small></div></div>
+          </article>
+          <article class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>« Le service client répond tout de suite sur WhatsApp. Paiement par Wave, super pratique. »</p>
+            <div class="review__author"><span class="avatar">MS</span><div><strong>Moussa S.</strong><small>Thiès</small></div></div>
+          </article>
+          <article class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>« Très belle qualité, emballage soigné. C'est devenu ma boutique préférée pour les cadeaux. »</p>
+            <div class="review__author"><span class="avatar">FN</span><div><strong>Fatou N.</strong><small>Saint-Louis</small></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="newsletter reveal">
+          <h2>Rejoignez le club NOVA</h2>
+          <p>Recevez en avant-première nos nouveautés et des offres exclusives.</p>
+          <form id="newsletterForm" class="newsletter__form">
+            <input type="email" placeholder="Votre adresse e-mail" required aria-label="Adresse e-mail">
+            <button type="submit" class="btn btn--primary">S'inscrire</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Pied de page -->
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div>
+        <a href="#" class="logo logo--light">NOVA<span>.</span></a>
+        <p>Votre concept store en ligne : mode, beauté et maison, sélectionnés avec passion.</p>
+      </div>
+      <div>
+        <h4>Boutique</h4>
+        <a href="#boutique">Nouveautés</a>
+        <a href="#offre">Promotions</a>
+        <a href="#categories">Catégories</a>
+      </div>
+      <div>
+        <h4>Aide</h4>
+        <a href="#">Livraison</a>
+        <a href="#">Retours</a>
+        <a href="#">FAQ</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>📍 Dakar, Sénégal</p>
+        <p>📞 +221 XX XXX XX XX</p>
+        <p>✉️ contact@nova-store.com</p>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <p>&copy; <span id="year"></span> NOVA. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <!-- Panier (tiroir) -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="cartDrawer" aria-label="Panier">
+    <div class="drawer__head">
+      <h3>Votre panier</h3>
+      <button class="icon-btn" data-close aria-label="Fermer">✕</button>
+    </div>
+    <div class="drawer__body" id="cartItems"></div>
+    <div class="drawer__foot">
+      <div class="shipping-bar">
+        <p id="shippingText"></p>
+        <div class="shipping-bar__track"><div class="shipping-bar__fill" id="shippingFill"></div></div>
+      </div>
+      <form class="coupon" id="couponForm">
+        <input type="text" id="couponInput" placeholder="Code promo" aria-label="Code promo">
+        <button type="submit" class="btn btn--small">Appliquer</button>
+      </form>
+      <div class="totals">
+        <div><span>Sous-total</span><span id="subtotal">0 FCFA</span></div>
+        <div id="discountRow" hidden><span>Réduction</span><span id="discount">0 FCFA</span></div>
+        <div><span>Livraison</span><span id="shipping">0 FCFA</span></div>
+        <div class="totals__grand"><span>Total</span><span id="total">0 FCFA</span></div>
+      </div>
+      <button class="btn btn--primary btn--block" id="checkoutBtn">Commander</button>
+    </div>
+  </aside>
+
+  <!-- Favoris (tiroir) -->
+  <aside class="drawer" id="wishlistDrawer" aria-label="Favoris">
+    <div class="drawer__head">
+      <h3>Mes favoris</h3>
+      <button class="icon-btn" data-close aria-label="Fermer">✕</button>
+    </div>
+    <div class="drawer__body" id="wishlistItems"></div>
+  </aside>
+
+  <!-- Aperçu produit -->
+  <div class="modal" id="productModal" role="dialog" aria-modal="true">
+    <div class="modal__box modal__box--wide">
+      <button class="icon-btn modal__close" data-close aria-label="Fermer">✕</button>
+      <div id="productModalContent"></div>
+    </div>
+  </div>
+
+  <!-- Commande -->
+  <div class="modal" id="checkoutModal" role="dialog" aria-modal="true">
+    <div class="modal__box">
+      <button class="icon-btn modal__close" data-close aria-label="Fermer">✕</button>
+      <div id="checkoutContent">
+        <h3>Finaliser la commande</h3>
+        <form id="checkoutForm" class="form">
+          <label>Nom complet<input name="name" required></label>
+          <label>Téléphone<input name="phone" type="tel" required placeholder="77 123 45 67"></label>
+          <label>Adresse de livraison<input name="address" required></label>
+          <label>Mode de paiement
+            <select name="payment">
+              <option>Paiement à la livraison</option>
+              <option>Wave</option>
+              <option>Orange Money</option>
+              <option>Carte bancaire</option>
+            </select>
+          </label>
+          <p class="form__total">Total à payer : <strong id="checkoutTotal"></strong></p>
+          <button type="submit" class="btn btn--primary btn--block">Confirmer la commande</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
