@@ -12,7 +12,7 @@ const SETTINGS = {
   coupons: {},
   // Mettez votre numéro WhatsApp (format international sans "+", ex. "221771234567")
   // pour recevoir les commandes directement sur WhatsApp. Laissez vide pour désactiver.
-  whatsappNumber: "221773539514",
+  whatsappNumber: "221776455331",
 };
 
 const CATEGORIES = [
