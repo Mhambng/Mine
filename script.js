@@ -53,6 +53,16 @@ const PRODUCTS = [
     desc: "Désodorisant d'ambiance Nova Fresh, Fruity Collection, senteur fraise. Flacon pulvérisateur." },
   { id: 114, name: "Essuie-tout et support en bambou", cat: "entretien", price: null, photo: "essuie-tout-bambou", emoji: "🧻", bg: "#f3ede5",
     desc: "Rouleau d'essuie-tout (50 feuilles) présenté sur un support en bambou." },
+  { id: 115, name: "GW – Brosse soufflante GW-6595", cat: "soins", price: null, photo: "gw-brosse-sechante", emoji: "💇🏾‍♀️", bg: "#f3ede5", tag: "new",
+    desc: "Brosse soufflante GW, modèle GW-6595 (Hair Dryer and Styler) : sèche et coiffe en un seul geste." },
+  { id: 116, name: "Mortier et plateau en bambou", cat: "entretien", price: null, photo: "mortier-plateau-bambou", emoji: "🥣", bg: "#f3ede5",
+    desc: "Mortier avec pilon et plateau rectangulaire effet bambou." },
+  { id: 117, name: "Kiss Beauty – Sérum lèvres", cat: "soins", price: null, photo: "kiss-beauty-lip-serum", emoji: "💋", bg: "#f3ede5",
+    desc: "Sérum pour les lèvres Kiss Beauty à l'acide hyaluronique, pour lèvres sèches et gercées. 15 ml." },
+  { id: 118, name: "Bioaqua – Tender Red Pigment", cat: "soins", price: null, photo: "bioaqua-tender-red", emoji: "🌷", bg: "#f3ede5",
+    desc: "Produit de beauté Bioaqua, gamme Tender Red Pigment." },
+  { id: 119, name: "Coffret Veyes – 4 eaux de parfum", cat: "parfums", price: null, photo: "veyes-coffret-parfums", emoji: "🎁", bg: "#f3ede5", tag: "new",
+    desc: "Coffret cadeau Veyes : 4 eaux de parfum de 25 ml (dont Desert Man)." },
 ];
 
 /* ---------- État ---------- */
