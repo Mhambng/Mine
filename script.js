@@ -81,6 +81,16 @@ const PRODUCTS = [
     desc: "Déodorant parfumé en spray pour le corps King's Essence, Intense Wayfarer. 200 ml." },
   { id: 128, name: "Black Boos – Eau de toilette", cat: "parfums", price: null, photo: "black-boos", emoji: "🖤", bg: "#f3ede5",
     desc: "Eau de toilette Black Boos, vaporisateur 50 ml." },
+  { id: 129, name: "Mixgliss Fresh – Menthe poivrée", cat: "soins", price: null, photo: "mixgliss-fresh", emoji: "🌿", bg: "#f3ede5",
+    desc: "Gel lubrifiant intime à base d'eau Mixgliss Fresh, parfum menthe poivrée. Tube de 70 ml." },
+  { id: 130, name: "Rasita – Gommage AHA Collagen", cat: "soins", price: null, photo: "rasita-gommage-aha", emoji: "🍍", bg: "#f3ede5", tag: "new",
+    desc: "Gommage corps Rasita AHA Collagen « Smooth & Clean » à l'ananas." },
+  { id: 131, name: "Déboucheur canalisations Drain Cleaner", cat: "entretien", price: null, photo: "deboucheur-drain-cleaner", emoji: "🚿", bg: "#f3ede5",
+    desc: "Poudre déboucheur Drain Cleaner à technologie oxygène : décompose graisses et résidus organiques. 300 g." },
+  { id: 132, name: "Veyes – Diffuseur à bâtonnets fraise", cat: "senteurs", price: null, photo: "veyes-diffuseur-fraise", emoji: "🍓", bg: "#f3ede5",
+    desc: "Diffuseur de parfum d'intérieur à bâtonnets Veyes (Reed Diffuser), senteur fraise. 110 ml." },
+  { id: 133, name: "Tokyo Night – Déodorant roll-on", cat: "soins", price: null, photo: "tokyo-night-roll-on", emoji: "🌸", bg: "#f3ede5",
+    desc: "Déodorant roll-on anti-transpirant Tokyo Night, senteur florale." },
 ];
 
 /* ---------- État ---------- */
