@@ -71,6 +71,16 @@ const PRODUCTS = [
     desc: "Eau de parfum Parfums Saphir, Affaire pour homme. 50 ml." },
   { id: 123, name: "Saphir Seduction Man", cat: "parfums", price: null, photo: "saphir-seduction-man", emoji: "💎", bg: "#f3ede5",
     desc: "Eau de parfum Parfums Saphir, Seduction Man de Saphir pour homme. 50 ml." },
+  { id: 124, name: "Saphir Vive la Femme", cat: "parfums", price: null, photo: "saphir-vive-la-femme", emoji: "🌹", bg: "#f3ede5",
+    desc: "Eau de parfum Parfums Saphir, Vive la Femme pour femme. 50 ml." },
+  { id: 125, name: "Saphir Perfect Woman", cat: "parfums", price: null, photo: "saphir-perfect-woman", emoji: "🌹", bg: "#f3ede5",
+    desc: "Eau de parfum Parfums Saphir, Saphir Perfect Woman pour femme. 50 ml." },
+  { id: 126, name: "King's Essence Marshmallow Blush", cat: "soins", price: null, photo: "kings-essence-marshmallow-blush", emoji: "🍬", bg: "#f3ede5",
+    desc: "Déodorant parfumé en spray pour le corps King's Essence, Marshmallow Blush. 200 ml." },
+  { id: 127, name: "King's Essence Intense Wayfarer", cat: "soins", price: null, photo: "kings-essence-intense-wayfarer", emoji: "🖤", bg: "#f3ede5",
+    desc: "Déodorant parfumé en spray pour le corps King's Essence, Intense Wayfarer. 200 ml." },
+  { id: 128, name: "Black Boos – Eau de toilette", cat: "parfums", price: null, photo: "black-boos", emoji: "🖤", bg: "#f3ede5",
+    desc: "Eau de toilette Black Boos, vaporisateur 50 ml." },
 ];
 
 /* ---------- État ---------- */
