@@ -45,6 +45,14 @@ const PRODUCTS = [
     desc: "Eau de parfum Yara de Lattafa, vaporisateur 100 ml." },
   { id: 110, name: "Eyfel Room Spray – Océan", cat: "senteurs", price: null, photo: "eyfel-room-spray-ocean", emoji: "🌊", bg: "#f3ede5",
     desc: "Spray d'ambiance Eyfel, senteur Okyanus / Ocean." },
+  { id: 111, name: "Pinky Clean – Pâte nettoyante", cat: "entretien", price: null, photo: "pinky-clean", emoji: "🧽", bg: "#f3ede5",
+    desc: "Pâte nettoyante Pinky Clean pour la maison et l'extérieur. Pot de 500 g." },
+  { id: 112, name: "Marquise Bleue – Eau de parfum", cat: "parfums", price: null, photo: "marquise-bleue", emoji: "💙", bg: "#f3ede5",
+    desc: "Eau de parfum Marquise Bleue (Luca Bossi), vaporisateur 50 ml." },
+  { id: 113, name: "Nova Fresh – Désodorisant fraise", cat: "senteurs", price: null, photo: "nova-fresh-fraise", emoji: "🍓", bg: "#f3ede5",
+    desc: "Désodorisant d'ambiance Nova Fresh, Fruity Collection, senteur fraise. Flacon pulvérisateur." },
+  { id: 114, name: "Essuie-tout et support en bambou", cat: "entretien", price: null, photo: "essuie-tout-bambou", emoji: "🧻", bg: "#f3ede5",
+    desc: "Rouleau d'essuie-tout (50 feuilles) présenté sur un support en bambou." },
 ];
 
 /* ---------- État ---------- */
