@@ -52,7 +52,7 @@ const PRODUCTS = [
     desc: "Spray d'ambiance Eyfel, senteur Okyanus / Ocean." },
   { id: 111, name: "Pinky Clean – Pâte nettoyante", cat: "entretien", price: 1500, photo: "pinky-clean", emoji: "🧽", bg: "#f3ede5",
     desc: "Pâte nettoyante Pinky Clean pour la maison et l'extérieur. Pot de 500 g." },
-  { id: 112, name: "Marquise Bleue – Eau de parfum", cat: "parfums", price: 100, photo: "marquise-bleue", emoji: "💙", bg: "#f3ede5",
+  { id: 112, name: "Marquise Bleue – Eau de parfum", cat: "parfums", price: 1000, photo: "marquise-bleue", emoji: "💙", bg: "#f3ede5",
     desc: "Eau de parfum Marquise Bleue (Luca Bossi), vaporisateur 50 ml." },
   { id: 113, name: "Nova Fresh – Désodorisant fraise", cat: "senteurs", price: 1000, photo: "nova-fresh-fraise", emoji: "🍓", bg: "#f3ede5",
     desc: "Désodorisant d'ambiance Nova Fresh, Fruity Collection, senteur fraise. Flacon pulvérisateur." },
