@@ -19,7 +19,11 @@ const CATEGORIES = [
   { id: "senteurs",  name: "Senteurs & encens",  desc: "Parfums d'intérieur, oud",   emoji: "🕯️", bg: "linear-gradient(135deg,#e4a24a,#c8553d)" },
   { id: "soins",     name: "Soins & beauté",     desc: "Savons, lèvres, cheveux",    emoji: "🧼", bg: "linear-gradient(135deg,#d17a9a,#7d3c6b)" },
   { id: "entretien", name: "Maison & entretien", desc: "Ménage & cuisine",           emoji: "🏠", bg: "linear-gradient(135deg,#4f7a65,#2d4a3e)" },
+  // Rubrique discrète : pas de grande vignette, absente de « Tout »,
+  // visible seulement par son filtre en fin de liste.
+  { id: "intime",    name: "Bien-être intime",   desc: "",                           emoji: "", bg: "", discreet: true },
 ];
+const isDiscreet = (p) => CATEGORIES.find((c) => c.id === p.cat)?.discreet;
 
 // Photos : chaque produit avec "photo" utilise les fichiers
 // images/<photo>-principale-400.webp et images/<photo>-principale-800.webp.
@@ -81,7 +85,7 @@ const PRODUCTS = [
     desc: "Déodorant parfumé en spray pour le corps King's Essence, Intense Wayfarer. 200 ml." },
   { id: 128, name: "Black Boos – Eau de toilette", cat: "parfums", price: null, photo: "black-boos", emoji: "🖤", bg: "#f3ede5",
     desc: "Eau de toilette Black Boos, vaporisateur 50 ml." },
-  { id: 129, name: "Mixgliss Fresh – Menthe poivrée", cat: "soins", price: null, photo: "mixgliss-fresh", emoji: "🌿", bg: "#f3ede5",
+  { id: 129, name: "Mixgliss Fresh – Menthe poivrée", cat: "intime", price: null, photo: "mixgliss-fresh", emoji: "🌿", bg: "#f3ede5",
     desc: "Gel lubrifiant intime à base d'eau Mixgliss Fresh, parfum menthe poivrée. Tube de 70 ml." },
   { id: 130, name: "Rasita – Gommage AHA Collagen", cat: "soins", price: null, photo: "rasita-gommage-aha", emoji: "🍍", bg: "#f3ede5", tag: "new",
     desc: "Gommage corps Rasita AHA Collagen « Smooth & Clean » à l'ananas." },
@@ -156,17 +160,18 @@ function bump(el) {
 
 /* ---------- Catégories & filtres ---------- */
 function renderCategories() {
-  $("#categoriesGrid").innerHTML = CATEGORIES.map((c) => `
+  $("#categoriesGrid").innerHTML = CATEGORIES.filter((c) => !c.discreet).map((c) => `
     <button class="category reveal" style="background:${c.bg}" data-cat="${c.id}">
       <span class="category__emoji">${c.emoji}</span>
       <h3>${c.name}</h3>
       <p>${c.desc}</p>
     </button>`).join("");
 
-  const chips = [{ id: "all", name: "Tout" }, ...CATEGORIES];
+  const chips = [{ id: "all", name: "Tout" }, ...CATEGORIES.filter((c) => !c.discreet)];
   if (PRODUCTS.some((p) => p.old)) chips.push({ id: "promo", name: "🔥 Promos" });
+  chips.push(...CATEGORIES.filter((c) => c.discreet).map((c) => ({ ...c, cls: " chip--discreet" })));
   $("#filters").innerHTML = chips.map((c) =>
-    `<button class="chip${c.id === activeFilter ? " active" : ""}" data-filter="${c.id}">${c.name}</button>`).join("");
+    `<button class="chip${c.cls || ""}${c.id === activeFilter ? " active" : ""}" data-filter="${c.id}">${c.name}</button>`).join("");
 }
 
 function setFilter(id) {
@@ -178,7 +183,9 @@ function setFilter(id) {
 /* ---------- Produits ---------- */
 function visibleProducts() {
   let list = PRODUCTS.filter((p) => {
-    const matchFilter = activeFilter === "all" || p.cat === activeFilter || (activeFilter === "promo" && p.old);
+    // Les produits discrets apparaissent dans « Tout » seulement si on les cherche
+    const matchFilter = (activeFilter === "all" && (!isDiscreet(p) || searchTerm)) || p.cat === activeFilter
+      || (activeFilter === "promo" && p.old && !isDiscreet(p));
     const matchSearch = p.name.toLowerCase().includes(searchTerm) || p.cat.includes(searchTerm);
     return matchFilter && matchSearch && (!hasPrice(p) || maxPrice >= PRICE_CEIL || p.price <= maxPrice);
   });

@@ -610,3 +610,5 @@ h1, h2, h3 { font-family: "Playfair Display", Georgia, serif; line-height: 1.15;
   .promo__visual img { width: 84px; height: 84px; }
   .promo__visual img:nth-child(2) { width: 104px; height: 104px; }
 }
+
+.chip--discreet { border-style: dashed; color: var(--muted); font-size: .85rem; }
