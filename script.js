@@ -63,6 +63,14 @@ const PRODUCTS = [
     desc: "Produit de beauté Bioaqua, gamme Tender Red Pigment." },
   { id: 119, name: "Coffret Veyes – 4 eaux de parfum", cat: "parfums", price: null, photo: "veyes-coffret-parfums", emoji: "🎁", bg: "#f3ede5", tag: "new",
     desc: "Coffret cadeau Veyes : 4 eaux de parfum de 25 ml (dont Desert Man)." },
+  { id: 120, name: "Savon Rasita au miel", cat: "soins", price: null, photo: "savon-rasita-miel", emoji: "🍯", bg: "#f3ede5",
+    desc: "Savon fait main Rasita au miel et aux huiles essentielles (Honey Essential Oil Handmade Soap). 145 g." },
+  { id: 121, name: "Savon Korreanna Kojic", cat: "soins", price: null, photo: "savon-korreanna-kojic", emoji: "🧼", bg: "#f3ede5",
+    desc: "Savon exfoliant Korreanna à l'acide kojique (Kojic peeling soap), senteur Precious Scent. 70 g." },
+  { id: 122, name: "Saphir Affaire pour homme", cat: "parfums", price: null, photo: "saphir-affaire-homme", emoji: "💎", bg: "#f3ede5",
+    desc: "Eau de parfum Parfums Saphir, Affaire pour homme. 50 ml." },
+  { id: 123, name: "Saphir Seduction Man", cat: "parfums", price: null, photo: "saphir-seduction-man", emoji: "💎", bg: "#f3ede5",
+    desc: "Eau de parfum Parfums Saphir, Seduction Man de Saphir pour homme. 50 ml." },
 ];
 
 /* ---------- État ---------- */
