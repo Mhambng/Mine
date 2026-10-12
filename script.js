@@ -5,13 +5,14 @@
 
 const SETTINGS = {
   currency: "FCFA",
-  freeShippingFrom: 50000,
-  shippingCost: 2000,
-  coupons: { KHAY10: 0.10, BIENVENUE: 0.15 },
+  // Livraison : null = frais « à confirmer » sur WhatsApp. Mettre un nombre (ex. 1000) pour les afficher.
+  freeShippingFrom: null,
+  shippingCost: null,
+  // Codes promo, ex. { BIENVENUE: 0.10 } pour -10 %. Vide = pas de code promo.
+  coupons: {},
   // Mettez votre numéro WhatsApp (format international sans "+", ex. "221771234567")
   // pour recevoir les commandes directement sur WhatsApp. Laissez vide pour désactiver.
-  whatsappNumber: "",
-  promoEndsInDays: 3,
+  whatsappNumber: "221773539514",
 };
 
 const CATEGORIES = [
@@ -39,8 +40,8 @@ const PRODUCTS = [
     desc: "Oudh Maattar Fazza, présenté dans son coffret." },
   { id: 105, name: "Savon Tomato Luffa", cat: "soins", price: 500, photo: "savon-tomato-luffa", emoji: "🧼", bg: "#f3ede5",
     desc: "Savon de beauté Fluffy Luffa à la tomate, avec niacinamide (vitamine B3)." },
-  { id: 106, name: "Sachet bleu (nom à préciser)", cat: "entretien", price: 250, photo: "sachet-bleu", emoji: "🧽", bg: "#f3ede5",
-    desc: "Produit en sachet. Description à compléter." },
+  { id: 106, name: "Eau bleue", cat: "entretien", price: 250, photo: "sachet-bleu", emoji: "💧", bg: "#f3ede5",
+    desc: "Eau bleue en sachet." },
   { id: 107, name: "Blocs WC Classic 4 fonctions", cat: "entretien", price: 1500, photo: "blocs-wc-classic", emoji: "🚽", bg: "#f3ede5",
     desc: "Blocs WC « 4 Function Formula » à effet désodorisant. Lot de 3 × 50 g." },
   { id: 108, name: "SukGarden – Mousse lavante mains au thé", cat: "soins", price: 1500, photo: "sukgarden-savon-mains", emoji: "🫧", bg: "#f3ede5", tag: "new",
@@ -376,9 +377,10 @@ function saveCart() {
 
 function totals() {
   const subtotal = cart.reduce((s, l) => s + findProduct(l.id).price * l.qty, 0);
-  const discount = coupon ? subtotal * SETTINGS.coupons[coupon] : 0;
+  const discount = coupon && SETTINGS.coupons[coupon] ? subtotal * SETTINGS.coupons[coupon] : 0;
   const afterDiscount = subtotal - discount;
-  const shipping = subtotal === 0 || afterDiscount >= SETTINGS.freeShippingFrom ? 0 : SETTINGS.shippingCost;
+  const shipping = !SETTINGS.shippingCost || subtotal === 0
+    || (SETTINGS.freeShippingFrom && afterDiscount >= SETTINGS.freeShippingFrom) ? 0 : SETTINGS.shippingCost;
   return { subtotal, discount, shipping, total: afterDiscount + shipping, afterDiscount };
 }
 
@@ -412,16 +414,11 @@ function renderCart() {
   $("#subtotal").textContent = money(t.subtotal);
   $("#discountRow").hidden = !t.discount;
   $("#discount").textContent = `− ${money(t.discount)}${coupon ? ` (${coupon})` : ""}`;
-  $("#shipping").textContent = t.shipping ? money(t.shipping) : "Offerte";
+  $("#shipping").textContent = !SETTINGS.shippingCost ? "À confirmer" : t.shipping ? money(t.shipping) : "Offerte";
   $("#total").textContent = money(t.total);
   $("#checkoutBtn").disabled = !cart.length;
   $("#checkoutBtn").style.opacity = cart.length ? 1 : .5;
 
-  const remaining = SETTINGS.freeShippingFrom - t.afterDiscount;
-  $("#shippingText").innerHTML = remaining > 0
-    ? `Plus que <strong>${money(remaining)}</strong> pour la livraison offerte 🚚`
-    : `🎉 Bravo, la livraison est <strong>offerte</strong> !`;
-  $("#shippingFill").style.width = `${Math.min(100, (t.afterDiscount / SETTINGS.freeShippingFrom) * 100)}%`;
 }
 
 /* ---------- Commande ---------- */
@@ -445,7 +442,7 @@ function submitOrder(e) {
     });
     const message = [
       `Nouvelle commande ${orderId}`, "", ...lines, "",
-      `Total : ${money(t.total)}`, `Paiement : ${data.payment}`, "",
+      `Total articles : ${money(t.total)}${SETTINGS.shippingCost ? "" : " (livraison à confirmer)"}`, `Paiement : ${data.payment}`, "",
       `Nom : ${data.name}`, `Téléphone : ${data.phone}`, `Adresse : ${data.address}`,
     ].join("\n");
     window.open(`https://wa.me/${SETTINGS.whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
@@ -457,8 +454,9 @@ function submitOrder(e) {
     <div class="success">
       <div class="success__icon">🎉</div>
       <h3>Merci ${data.name.split(" ")[0]} !</h3>
-      <p>Votre commande <strong>${orderId}</strong> de <strong>${money(t.total)}</strong> a bien été enregistrée.<br>
-      Nous vous contacterons au ${data.phone} pour confirmer la livraison.</p>
+      <p>Votre commande <strong>${orderId}</strong> de <strong>${money(t.total)}</strong> est prête.<br>
+      ${SETTINGS.whatsappNumber ? "WhatsApp s'ouvre avec le détail de votre commande : <strong>envoyez le message</strong> pour la confirmer." : ""}
+      Nous vous recontacterons au ${data.phone} pour convenir de la livraison.</p>
       <button class="btn btn--primary" data-close>Continuer mes achats</button>
     </div>`;
   confetti();
@@ -509,25 +507,6 @@ function closeAll() {
   $$(".drawer.open, .modal.open, .nav.open").forEach((el) => el.classList.remove("open"));
   $("#overlay").classList.remove("show");
   document.body.classList.remove("no-scroll");
-}
-
-/* ---------- Compte à rebours ---------- */
-function startCountdown() {
-  let end = store.load("khay-promo-end", 0);
-  if (!end || end < Date.now()) {
-    end = Date.now() + SETTINGS.promoEndsInDays * 864e5;
-    store.save("khay-promo-end", end);
-  }
-  const pad = (n) => String(n).padStart(2, "0");
-  const tick = () => {
-    const diff = Math.max(0, end - Date.now());
-    $("#cdDays").textContent = pad(Math.floor(diff / 864e5));
-    $("#cdHours").textContent = pad(Math.floor(diff / 36e5) % 24);
-    $("#cdMinutes").textContent = pad(Math.floor(diff / 6e4) % 60);
-    $("#cdSeconds").textContent = pad(Math.floor(diff / 1e3) % 60);
-  };
-  tick();
-  setInterval(tick, 1000);
 }
 
 /* ---------- Recherche avec suggestions ---------- */
@@ -691,25 +670,6 @@ $("#searchInput").addEventListener("keydown", (e) => {
 $("#resetFilters").addEventListener("click", resetFilters);
 $("#sortSelect").addEventListener("change", (e) => { sortMode = e.target.value; renderProducts(); });
 
-$("#couponForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const code = $("#couponInput").value.trim().toUpperCase();
-  if (SETTINGS.coupons[code]) {
-    coupon = code;
-    store.save("khay-coupon", coupon);
-    toast(`✅ Code ${code} appliqué : -${SETTINGS.coupons[code] * 100} %`);
-    $("#couponInput").value = "";
-    renderCart();
-  } else {
-    toast("❌ Code promo invalide");
-  }
-});
-
-$("#newsletterForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  e.target.reset();
-  toast("💌 Merci ! Vous êtes inscrit(e) au club KhayStore.");
-});
 
 window.addEventListener("scroll", () => {
   const y = window.scrollY;
@@ -736,5 +696,4 @@ setupTilt();
 animateCounters();
 renderCart();
 renderWishlist();
-startCountdown();
 setupReveal();

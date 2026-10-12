@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KhayStore — Boutique en ligne</title>
-  <meta name="description" content="KhayStore : parfums, senteurs et encens, soins et produits pour la maison. Livraison rapide, paiement sécurisé.">
+  <meta name="description" content="KhayStore : parfums, senteurs et encens, soins et produits pour la maison. Commandez en ligne, confirmation sur WhatsApp.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
 
   <!-- Bandeau promo -->
   <div class="topbar">
-    <p>🚚 Livraison offerte dès 50 000 FCFA · Code <strong>KHAY10</strong> = -10 % sur votre première commande</p>
+    <p>📲 Commandez en ligne : nous confirmons chaque commande sur WhatsApp au <a href="https://wa.me/221773539514"><strong>77 353 95 14</strong></a></p>
   </div>
 
   <!-- En-tête -->
@@ -38,8 +38,6 @@
         <a href="#accueil">Accueil</a>
         <a href="#categories">Catégories</a>
         <a href="#boutique">Boutique</a>
-        <a href="#offre">Offres</a>
-        <a href="#avis">Avis</a>
         <a href="#contact">Contact</a>
       </nav>
 
@@ -70,18 +68,13 @@
     <section class="hero" id="accueil">
       <div class="container hero__inner">
         <div class="hero__text reveal">
-          <span class="eyebrow">Nouvelle collection 2026</span>
+          <span class="eyebrow">Parfums · Senteurs · Soins</span>
           <h1>Des senteurs qui vous <em>ressemblent</em>, livrées chez vous.</h1>
-          <p>Parfums, senteurs et encens, soins et produits pour la maison, sélectionnés avec soin et livrés en 24 à 72 h.</p>
+          <p>Parfums, senteurs et encens, soins et produits pour la maison, sélectionnés avec soin.</p>
           <div class="hero__cta">
             <a href="#boutique" class="btn btn--primary">Découvrir la boutique</a>
-            <a href="#offre" class="btn btn--ghost">Voir les offres</a>
+            <a href="#contact" class="btn btn--ghost">Nous contacter</a>
           </div>
-          <ul class="hero__stats">
-            <li><strong data-count="12" data-suffix="k+">12k+</strong><span>Clients satisfaits</span></li>
-            <li><strong data-count="4.9" data-decimals="1" data-suffix="/5">4,9/5</strong><span>Note moyenne</span></li>
-            <li><strong data-count="48" data-suffix=" h">48 h</strong><span>Livraison moyenne</span></li>
-          </ul>
         </div>
         <div class="hero__visual reveal">
           <div class="blob"></div>
@@ -93,18 +86,8 @@
             </div>
           </div>
           <div class="hero__card hero__card--float1"><span>✨</span> Nouveautés</div>
-          <div class="hero__card hero__card--float2"><span>🎁</span> -10 % avec KHAY10</div>
+          <div class="hero__card hero__card--float2"><span>📲</span> Commande via WhatsApp</div>
         </div>
-      </div>
-    </section>
-
-    <!-- Avantages -->
-    <section class="perks">
-      <div class="container perks__grid">
-        <div class="perk"><span>🚚</span><div><strong>Livraison rapide</strong><p>Partout en 24 à 72 h</p></div></div>
-        <div class="perk"><span>🔒</span><div><strong>Paiement sécurisé</strong><p>Wave, Orange Money, carte</p></div></div>
-        <div class="perk"><span>↩️</span><div><strong>Retours faciles</strong><p>14 jours pour changer d'avis</p></div></div>
-        <div class="perk"><span>💬</span><div><strong>Service client</strong><p>7 j/7 sur WhatsApp</p></div></div>
       </div>
     </section>
 
@@ -137,7 +120,7 @@
             <option value="featured">Tendances</option>
             <option value="price-asc">Prix croissant</option>
             <option value="price-desc">Prix décroissant</option>
-            <option value="rating">Mieux notés</option>
+            
           </select>
         </div>
 
@@ -152,96 +135,13 @@
       </div>
     </section>
 
-    <!-- Offre limitée -->
-    <section class="section" id="offre">
-      <div class="container">
-        <div class="promo reveal">
-          <div class="promo__text">
-            <span class="eyebrow eyebrow--light">Offre de lancement</span>
-            <h2>-10 % sur votre première commande</h2>
-            <p>Utilisez le code <strong>KHAY10</strong> dans votre panier avant la fin du compte à rebours.</p>
-            <div class="countdown" id="countdown">
-              <div><strong id="cdDays">00</strong><span>Jours</span></div>
-              <div><strong id="cdHours">00</strong><span>Heures</span></div>
-              <div><strong id="cdMinutes">00</strong><span>Min</span></div>
-              <div><strong id="cdSeconds">00</strong><span>Sec</span></div>
-            </div>
-            <a href="#boutique" class="btn btn--light" data-filter-link="all">J'en profite</a>
-          </div>
-          <div class="promo__visual">
-            <img src="images/gotaz-frescaz-principale-400.webp" alt="Gotaz Frescaz" width="400" height="400" loading="lazy">
-            <img src="images/oudh-maattar-fazza-principale-400.webp" alt="Oudh Maattar Fazza" width="400" height="400" loading="lazy">
-            <img src="images/savon-tomato-luffa-principale-400.webp" alt="Savon Tomato Luffa" width="400" height="400" loading="lazy">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Avis -->
-    <section class="section section--alt" id="avis">
-      <div class="container">
-        <div class="section__head reveal">
-          <span class="eyebrow">Témoignages</span>
-          <h2>Ils nous font confiance</h2>
-        </div>
-        <div class="reviews">
-          <article class="review reveal">
-            <div class="stars">★★★★★</div>
-            <p>« Livraison ultra rapide et les produits sont encore plus beaux qu'en photo. Je recommande à 100 % ! »</p>
-            <div class="review__author"><span class="avatar">AD</span><div><strong>Aïssatou D.</strong><small>Dakar</small></div></div>
-          </article>
-          <article class="review reveal">
-            <div class="stars">★★★★★</div>
-            <p>« Le service client répond tout de suite sur WhatsApp. Paiement par Wave, super pratique. »</p>
-            <div class="review__author"><span class="avatar">MS</span><div><strong>Moussa S.</strong><small>Thiès</small></div></div>
-          </article>
-          <article class="review reveal">
-            <div class="stars">★★★★★</div>
-            <p>« Très belle qualité, emballage soigné. C'est devenu ma boutique préférée pour les cadeaux. »</p>
-            <div class="review__author"><span class="avatar">FN</span><div><strong>Fatou N.</strong><small>Saint-Louis</small></div></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="section" id="faq">
-      <div class="container container--narrow">
-        <div class="section__head reveal">
-          <span class="eyebrow">Questions fréquentes</span>
-          <h2>Tout savoir avant de commander</h2>
-        </div>
-        <div class="faq">
-          <details class="faq__item reveal">
-            <summary>Quels sont les délais de livraison ?</summary>
-            <p>Nous livrons en 24 à 72 h selon votre ville. Vous êtes contacté(e) par téléphone avant la livraison.</p>
-          </details>
-          <details class="faq__item reveal">
-            <summary>Comment puis-je payer ?</summary>
-            <p>Paiement à la livraison, Wave, Orange Money ou carte bancaire : vous choisissez au moment de commander.</p>
-          </details>
-          <details class="faq__item reveal">
-            <summary>La livraison est-elle gratuite ?</summary>
-            <p>Oui, dès 50 000 FCFA d'achat. En dessous, les frais de livraison sont de 2 000 FCFA.</p>
-          </details>
-          <details class="faq__item reveal">
-            <summary>Puis-je retourner un article ?</summary>
-            <p>Vous avez 14 jours après réception pour nous retourner un article non porté, dans son emballage d'origine.</p>
-          </details>
-        </div>
-      </div>
-    </section>
-
     <!-- Newsletter -->
     <section class="section" id="contact">
       <div class="container">
         <div class="newsletter reveal">
-          <h2>Rejoignez le club KhayStore</h2>
-          <p>Recevez en avant-première nos nouveautés et des offres exclusives.</p>
-          <form id="newsletterForm" class="newsletter__form">
-            <input type="email" placeholder="Votre adresse e-mail" required aria-label="Adresse e-mail">
-            <button type="submit" class="btn btn--primary">S'inscrire</button>
-          </form>
+          <h2>Une question ? Écrivez-nous</h2>
+          <p>Pour un renseignement sur un produit ou une commande, contactez-nous directement sur WhatsApp.</p>
+          <a href="https://wa.me/221773539514" class="btn btn--primary" target="_blank" rel="noopener">💬 WhatsApp : 77 353 95 14</a>
         </div>
       </div>
     </section>
@@ -257,20 +157,12 @@
       <div>
         <h4>Boutique</h4>
         <a href="#boutique">Nouveautés</a>
-        <a href="#offre">Promotions</a>
         <a href="#categories">Catégories</a>
       </div>
       <div>
-        <h4>Aide</h4>
-        <a href="#">Livraison</a>
-        <a href="#">Retours</a>
-        <a href="#faq">FAQ</a>
-      </div>
-      <div>
         <h4>Contact</h4>
-        <p>📍 Dakar, Sénégal</p>
-        <p>📞 +221 XX XXX XX XX</p>
-        <p>✉️ contact@khaystore.com</p>
+        <p>📞 <a href="tel:+221773539514">+221 77 353 95 14</a></p>
+        <p>💬 <a href="https://wa.me/221773539514" target="_blank" rel="noopener">Écrire sur WhatsApp</a></p>
       </div>
     </div>
     <div class="container footer__bottom">
@@ -287,19 +179,11 @@
     </div>
     <div class="drawer__body" id="cartItems"></div>
     <div class="drawer__foot">
-      <div class="shipping-bar">
-        <p id="shippingText"></p>
-        <div class="shipping-bar__track"><div class="shipping-bar__fill" id="shippingFill"></div></div>
-      </div>
-      <form class="coupon" id="couponForm">
-        <input type="text" id="couponInput" placeholder="Code promo" aria-label="Code promo">
-        <button type="submit" class="btn btn--small">Appliquer</button>
-      </form>
       <div class="totals">
         <div><span>Sous-total</span><span id="subtotal">0 FCFA</span></div>
         <div id="discountRow" hidden><span>Réduction</span><span id="discount">0 FCFA</span></div>
-        <div><span>Livraison</span><span id="shipping">0 FCFA</span></div>
-        <div class="totals__grand"><span>Total</span><span id="total">0 FCFA</span></div>
+        <div><span>Livraison</span><span id="shipping">À confirmer</span></div>
+        <div class="totals__grand"><span>Total articles</span><span id="total">0 FCFA</span></div>
       </div>
       <button class="btn btn--primary btn--block" id="checkoutBtn">Commander</button>
     </div>
@@ -337,7 +221,6 @@
               <option>Paiement à la livraison</option>
               <option>Wave</option>
               <option>Orange Money</option>
-              <option>Carte bancaire</option>
             </select>
           </label>
           <p class="form__total">Total à payer : <strong id="checkoutTotal"></strong></p>
