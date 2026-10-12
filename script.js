@@ -15,27 +15,26 @@ const SETTINGS = {
 };
 
 const CATEGORIES = [
-  { id: "mode",        name: "Mode",        desc: "Vêtements tendance",    emoji: "👗", bg: "linear-gradient(135deg,#c8553d,#8f3a5a)" },
-  { id: "accessoires", name: "Accessoires", desc: "Sacs, bijoux, lunettes", emoji: "👜", bg: "linear-gradient(135deg,#e4a24a,#c8553d)" },
-  { id: "beaute",      name: "Beauté",      desc: "Soins & parfums",       emoji: "💄", bg: "linear-gradient(135deg,#d17a9a,#7d3c6b)" },
-  { id: "maison",      name: "Maison",      desc: "Déco & art de vivre",   emoji: "🪴", bg: "linear-gradient(135deg,#4f7a65,#2d4a3e)" },
+  { id: "parfums",   name: "Parfums",            desc: "Eaux de parfum & colognes",  emoji: "🌸", bg: "linear-gradient(135deg,#c8553d,#8f3a5a)" },
+  { id: "senteurs",  name: "Senteurs & encens",  desc: "Parfums d'intérieur, oud",   emoji: "🕯️", bg: "linear-gradient(135deg,#e4a24a,#c8553d)" },
+  { id: "soins",     name: "Soins & beauté",     desc: "Savons, lèvres, cheveux",    emoji: "🧼", bg: "linear-gradient(135deg,#d17a9a,#7d3c6b)" },
+  { id: "entretien", name: "Maison & entretien", desc: "Ménage & cuisine",           emoji: "🏠", bg: "linear-gradient(135deg,#4f7a65,#2d4a3e)" },
 ];
 
-// Photos : placez vos images dans le dossier "images/" puis ajoutez
-// img: "images/nom-du-fichier.jpg" au produit. Sans photo, l'émoji s'affiche.
+// Photos : chaque produit avec "photo" utilise les fichiers
+// images/<photo>-principale-400.webp et images/<photo>-principale-800.webp.
+// Prix : laissez price à null tant qu'il n'est pas fixé (« Prix bientôt disponible »).
 const PRODUCTS = [
-  { id: 1,  name: "Robe Wax Élégance",      cat: "mode",        price: 28000, old: 38000, rating: 4.9, reviews: 128, emoji: "👗", bg: "#f7e1d7", tag: "promo", desc: "Robe mi-longue en tissu wax 100 % coton, coupe fluide et ceinture assortie. Idéale pour les cérémonies comme pour le quotidien." },
-  { id: 2,  name: "Sac Cuir Signature",     cat: "accessoires", price: 45000, old: 64000, rating: 5.0, reviews: 96,  emoji: "👜", bg: "#f3e3c9", tag: "promo", desc: "Sac à main en cuir véritable, finitions cousues main, grande contenance et bandoulière amovible." },
-  { id: 3,  name: "Sneakers Urban Flow",    cat: "mode",        price: 35000, rating: 4.7, reviews: 210, emoji: "👟", bg: "#e3ebe6", tag: "new", desc: "Baskets légères et respirantes, semelle à mémoire de forme pour un confort toute la journée." },
-  { id: 4,  name: "Lunettes Soleil Riviera", cat: "accessoires", price: 15000, old: 22000, rating: 4.6, reviews: 74, emoji: "🕶️", bg: "#e6e1f2", tag: "promo", desc: "Verres polarisés anti-UV400, monture légère et étui de protection inclus." },
-  { id: 5,  name: "Parfum Ambre Nuit",      cat: "beaute",      price: 32000, rating: 4.8, reviews: 152, emoji: "🧴", bg: "#f6dde6", tag: "new", desc: "Eau de parfum 100 ml aux notes d'ambre, de vanille et de bois de santal. Tenue longue durée." },
-  { id: 6,  name: "Montre Or Minimal",      cat: "accessoires", price: 55000, rating: 4.9, reviews: 88,  emoji: "⌚", bg: "#f5ecd5", desc: "Montre à quartz, boîtier acier doré, bracelet milanais ajustable. Étanche 3 ATM." },
-  { id: 7,  name: "Coffret Soins Karité",   cat: "beaute",      price: 18000, old: 24000, rating: 4.8, reviews: 301, emoji: "🧖🏾‍♀️", bg: "#fbe7d3", tag: "promo", desc: "Coffret naturel : beurre de karité pur, huile de baobab et savon noir. Fabriqué au Sénégal." },
-  { id: 8,  name: "Bougie Parfumée Bissap", cat: "maison",      price: 9500,  rating: 4.7, reviews: 67,  emoji: "🕯️", bg: "#f4dcdc", desc: "Bougie à la cire de soja, parfum fleur d'hibiscus. 40 heures de combustion." },
-  { id: 9,  name: "Plante Monstera",        cat: "maison",      price: 16000, rating: 4.6, reviews: 45,  emoji: "🪴", bg: "#dfeee3", tag: "new", desc: "Monstera deliciosa en pot céramique fait main. Facile d'entretien, parfaite pour le salon." },
-  { id: 10, name: "Chemise Lin Premium",    cat: "mode",        price: 22000, rating: 4.5, reviews: 59,  emoji: "👔", bg: "#e1e8f0", desc: "Chemise en lin lavé, coupe droite, idéale pour les journées chaudes." },
-  { id: 11, name: "Rouge à Lèvres Velours", cat: "beaute",      price: 7500,  old: 10000, rating: 4.7, reviews: 188, emoji: "💄", bg: "#f8d9de", tag: "promo", desc: "Fini mat velouré, longue tenue 12 h, enrichi en huile d'argan." },
-  { id: 12, name: "Coussin Bogolan",        cat: "maison",      price: 12000, rating: 4.8, reviews: 39,  emoji: "🛋️", bg: "#efe4d6", desc: "Housse de coussin en tissu bogolan authentique, 45 × 45 cm, garnissage inclus." },
+  { id: 101, name: "Naseem Marble Whispers", cat: "senteurs", price: null, photo: "naseem-marble-whispers", emoji: "🌸", bg: "#f3ede5", tag: "new",
+    desc: "Parfum d'intérieur (home freshener) Naseem, gamme Marble Whispers. Flacon de 500 ml." },
+  { id: 102, name: "Charbon Al Musk", cat: "senteurs", price: null, photo: "charbon-al-musk", emoji: "🔥", bg: "#f3ede5",
+    desc: "Rouleau de charbons Al Musk pour brûler l'encens et le bakhoor." },
+  { id: 103, name: "Gotaz Frescaz – Eau de Cologne", cat: "parfums", price: null, photo: "gotaz-frescaz", emoji: "🍋", bg: "#f3ede5", tag: "new",
+    desc: "Agua de Colonia concentrada (eau de Cologne concentrée), flacon spray." },
+  { id: 104, name: "Oudh Maattar Fazza", cat: "senteurs", price: null, photo: "oudh-maattar-fazza", emoji: "🪵", bg: "#f3ede5",
+    desc: "Oudh Maattar Fazza, présenté dans son coffret." },
+  { id: 105, name: "Savon Tomato Luffa", cat: "soins", price: null, photo: "savon-tomato-luffa", emoji: "🧼", bg: "#f3ede5",
+    desc: "Savon de beauté Fluffy Luffa à la tomate, avec niacinamide (vitamine B3)." },
 ];
 
 /* ---------- État ---------- */
@@ -55,7 +54,8 @@ let activeFilter = "all";
 let searchTerm = "";
 let sortMode = "featured";
 let recent = store.load("khay-recent", []);       // [id], le plus récent en premier
-const PRICE_CEIL = Math.ceil(Math.max(...PRODUCTS.map((p) => p.price)) / 1000) * 1000;
+const PRICES = PRODUCTS.filter((p) => typeof p.price === "number").map((p) => p.price);
+const PRICE_CEIL = PRICES.length ? Math.ceil(Math.max(...PRICES) / 1000) * 1000 : 50000;
 let maxPrice = PRICE_CEIL;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -65,9 +65,22 @@ const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const money = (n) => `${Math.round(n).toLocaleString("fr-FR")} ${SETTINGS.currency}`;
 const findProduct = (id) => PRODUCTS.find((p) => p.id === id);
 const stars = (r) => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r));
-const visual = (p) => p.img
-  ? `<img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.replaceWith(document.createTextNode('${p.emoji}'))">`
-  : p.emoji;
+const hasPrice = (p) => typeof p.price === "number";
+const priceHtml = (p) => hasPrice(p)
+  ? `${money(p.price)}${p.old ? `<del>${money(p.old)}</del>` : ""}`
+  : `<span class="price--soon">Prix bientôt disponible</span>`;
+const priceText = (p) => (hasPrice(p) ? money(p.price) : "Prix à venir");
+const fallback = (p) => `onerror="this.replaceWith(document.createTextNode('${p.emoji}'))"`;
+const visual = (p) => {
+  if (p.photo) {
+    const base = `images/${p.photo}-principale`;
+    return `<img src="${base}-800.webp" srcset="${base}-400.webp 400w, ${base}-800.webp 800w"
+      sizes="(max-width: 560px) 50vw, (max-width: 1024px) 33vw, 300px"
+      alt="${p.name}" loading="lazy" decoding="async" width="800" height="800" ${fallback(p)}>`;
+  }
+  if (p.img) return `<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async" ${fallback(p)}>`;
+  return p.emoji;
+};
 const heartSvg = `<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.2 3.3 4.5 7 4.5c2 0 3.5 1.1 5 3 1.5-1.9 3-3 5-3 3.7 0 6 3.7 4.5 7.3C19.5 16.4 12 21 12 21z"/></svg>`;
 
 let toastTimer;
@@ -94,7 +107,8 @@ function renderCategories() {
       <p>${c.desc}</p>
     </button>`).join("");
 
-  const chips = [{ id: "all", name: "Tout" }, ...CATEGORIES, { id: "promo", name: "🔥 Promos" }];
+  const chips = [{ id: "all", name: "Tout" }, ...CATEGORIES];
+  if (PRODUCTS.some((p) => p.old)) chips.push({ id: "promo", name: "🔥 Promos" });
   $("#filters").innerHTML = chips.map((c) =>
     `<button class="chip${c.id === activeFilter ? " active" : ""}" data-filter="${c.id}">${c.name}</button>`).join("");
 }
@@ -110,11 +124,12 @@ function visibleProducts() {
   let list = PRODUCTS.filter((p) => {
     const matchFilter = activeFilter === "all" || p.cat === activeFilter || (activeFilter === "promo" && p.old);
     const matchSearch = p.name.toLowerCase().includes(searchTerm) || p.cat.includes(searchTerm);
-    return matchFilter && matchSearch && p.price <= maxPrice;
+    return matchFilter && matchSearch && (!hasPrice(p) || maxPrice >= PRICE_CEIL || p.price <= maxPrice);
   });
-  if (sortMode === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
-  if (sortMode === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
-  if (sortMode === "rating") list = [...list].sort((a, b) => b.rating - a.rating);
+  const priceOr = (p, dflt) => (hasPrice(p) ? p.price : dflt);
+  if (sortMode === "price-asc") list = [...list].sort((a, b) => priceOr(a, Infinity) - priceOr(b, Infinity));
+  if (sortMode === "price-desc") list = [...list].sort((a, b) => priceOr(b, -Infinity) - priceOr(a, -Infinity));
+  if (sortMode === "rating") list = [...list].sort((a, b) => (b.rating || 0) - (a.rating || 0));
   return list;
 }
 
@@ -133,10 +148,10 @@ function productCard(p, i) {
       <div class="card__body">
         <span class="card__cat">${CATEGORIES.find((c) => c.id === p.cat).name}</span>
         <h3 class="card__title">${p.name}</h3>
-        <div class="rating">${stars(p.rating)}<small>(${p.reviews})</small></div>
+        ${p.reviews ? `<div class="rating">${stars(p.rating)}<small>(${p.reviews})</small></div>` : ""}
         <div class="card__foot">
-          <span class="price">${money(p.price)}${p.old ? `<del>${money(p.old)}</del>` : ""}</span>
-          <button class="add-btn" data-add="${p.id}" aria-label="Ajouter au panier">+</button>
+          <span class="price">${priceHtml(p)}</span>
+          ${hasPrice(p) ? `<button class="add-btn" data-add="${p.id}" aria-label="Ajouter au panier">+</button>` : ""}
         </div>
       </div>
     </article>`;
@@ -158,13 +173,14 @@ function openQuickView(id) {
       <div>
         <span class="eyebrow">${CATEGORIES.find((c) => c.id === p.cat).name}</span>
         <h3>${p.name}</h3>
-        <div class="rating">${stars(p.rating)}<small>${p.rating} · ${p.reviews} avis</small></div>
+        ${p.reviews ? `<div class="rating">${stars(p.rating)}<small>${p.rating} · ${p.reviews} avis</small></div>` : ""}
         <p class="quickview__desc">${p.desc}</p>
-        <span class="price">${money(p.price)}${p.old ? `<del>${money(p.old)}</del>` : ""}</span>
+        <span class="price">${priceHtml(p)}</span>
+        ${hasPrice(p) ? `
         <div class="quickview__actions">
           <div class="qty"><button data-qv="-1">−</button><span id="qvQty">1</span><button data-qv="1">+</button></div>
           <button class="btn btn--primary" id="qvAdd">Ajouter au panier</button>
-        </div>
+        </div>` : `<p class="quickview__note">Ce produit sera bientôt disponible à la commande.</p>`}
       </div>
     </div>
     ${similar.length ? `
@@ -175,7 +191,7 @@ function openQuickView(id) {
           <button class="mini" data-view="${x.id}">
             <span class="mini__img" style="background:${x.bg}">${visual(x)}</span>
             <span class="mini__name">${x.name}</span>
-            <span class="mini__price">${money(x.price)}</span>
+            <span class="mini__price">${priceText(x)}</span>
           </button>`).join("")}
       </div>
     </div>` : ""}`;
@@ -185,7 +201,7 @@ function openQuickView(id) {
     qty = Math.max(1, qty + Number(b.dataset.qv));
     $("#qvQty").textContent = qty;
   }));
-  $("#qvAdd").addEventListener("click", () => {
+  $("#qvAdd")?.addEventListener("click", () => {
     addToCart(p.id, qty, $(".quickview__media"));
     closeAll();
   });
@@ -210,9 +226,9 @@ function renderWishlist() {
     ? wishlist.map(findProduct).filter(Boolean).map((p) => `
         <div class="line">
           <div class="line__img" style="background:${p.bg}">${visual(p)}</div>
-          <div><p class="line__title">${p.name}</p><p class="line__price">${money(p.price)}</p></div>
+          <div><p class="line__title">${p.name}</p><p class="line__price">${priceText(p)}</p></div>
           <div class="line__side">
-            <button class="btn btn--small" data-add="${p.id}">Ajouter</button>
+            ${hasPrice(p) ? `<button class="btn btn--small" data-add="${p.id}">Ajouter</button>` : ""}
             <button class="line__remove" data-wish="${p.id}">Retirer</button>
           </div>
         </div>`).join("")
@@ -233,7 +249,7 @@ function renderRecent() {
     <button class="mini" data-view="${p.id}">
       <span class="mini__img" style="background:${p.bg}">${visual(p)}</span>
       <span class="mini__name">${p.name}</span>
-      <span class="mini__price">${money(p.price)}</span>
+      <span class="mini__price">${priceText(p)}</span>
     </button>`).join("");
 }
 
@@ -266,6 +282,8 @@ function flyToCart(sourceEl) {
 
 /* ---------- Panier ---------- */
 function addToCart(id, qty = 1, sourceEl) {
+  const product = findProduct(id);
+  if (!product || !hasPrice(product)) { toast("Ce produit sera bientôt disponible"); return; }
   const line = cart.find((l) => l.id === id);
   if (line) line.qty += qty; else cart.push({ id, qty });
   saveCart();
@@ -300,7 +318,7 @@ function totals() {
 }
 
 function renderCart() {
-  cart = cart.filter((l) => findProduct(l.id));
+  cart = cart.filter((l) => findProduct(l.id) && hasPrice(findProduct(l.id)));
   const count = cart.reduce((s, l) => s + l.qty, 0);
   const badge = $("#cartCount");
   badge.textContent = count;
@@ -457,7 +475,7 @@ function renderSuggestions() {
         <button class="suggest__item" data-view="${p.id}">
           <span class="mini__img" style="background:${p.bg}">${visual(p)}</span>
           <span>${p.name.replace(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "i"), "<mark>$1</mark>")}</span>
-          <strong>${money(p.price)}</strong>
+          <strong>${priceText(p)}</strong>
         </button>`).join("")
     : `<p class="suggest__empty">Aucun résultat pour « ${searchTerm.replace(/</g, "&lt;")} »</p>`;
   box.hidden = false;
@@ -466,6 +484,8 @@ function renderSuggestions() {
 /* ---------- Filtre par prix ---------- */
 function setupPriceFilter() {
   const range = $("#priceRange");
+  // Pas de curseur tant qu'aucun produit n'a de prix
+  range.closest(".price-filter").hidden = !PRICES.length;
   range.min = 0;
   range.max = PRICE_CEIL;
   range.value = maxPrice;
