@@ -35,6 +35,16 @@ const PRODUCTS = [
     desc: "Oudh Maattar Fazza, présenté dans son coffret." },
   { id: 105, name: "Savon Tomato Luffa", cat: "soins", price: null, photo: "savon-tomato-luffa", emoji: "🧼", bg: "#f3ede5",
     desc: "Savon de beauté Fluffy Luffa à la tomate, avec niacinamide (vitamine B3)." },
+  { id: 106, name: "Sachet bleu (nom à préciser)", cat: "entretien", price: null, photo: "sachet-bleu", emoji: "🧽", bg: "#f3ede5",
+    desc: "Produit en sachet. Description à compléter." },
+  { id: 107, name: "Blocs WC Classic 4 fonctions", cat: "entretien", price: null, photo: "blocs-wc-classic", emoji: "🚽", bg: "#f3ede5",
+    desc: "Blocs WC « 4 Function Formula » à effet désodorisant. Lot de 3 × 50 g." },
+  { id: 108, name: "SukGarden – Mousse lavante mains au thé", cat: "soins", price: null, photo: "sukgarden-savon-mains", emoji: "🫧", bg: "#f3ede5", tag: "new",
+    desc: "Savon mousse pour les mains SukGarden, parfum thé (Tea Bubble Hand Cleaner). Flacon pompe de 500 ml." },
+  { id: 109, name: "Lattafa Yara – Eau de parfum", cat: "parfums", price: null, photo: "lattafa-yara", emoji: "🌸", bg: "#f3ede5", tag: "new",
+    desc: "Eau de parfum Yara de Lattafa, vaporisateur 100 ml." },
+  { id: 110, name: "Eyfel Room Spray – Océan", cat: "senteurs", price: null, photo: "eyfel-room-spray-ocean", emoji: "🌊", bg: "#f3ede5",
+    desc: "Spray d'ambiance Eyfel, senteur Okyanus / Ocean." },
 ];
 
 /* ---------- État ---------- */
