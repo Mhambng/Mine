@@ -1,48 +1,29 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Site Web</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <h1>Bienvenue sur mon site web</h1>
-        <nav>
-            <ul>
-                <li><a href="#home">Accueil</a></li>
-                <li><a href="#about">À propos</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section id="home">
-            <h2>Accueil</h2>
-            <p>Ceci est la page d'accueil de mon site web.</p>
-        </section>
-        <section id="about">
-            <h2>À propos</h2>
-            <p>Informations à propos de moi.</p>
-        </section>
-        <section id="contact">
-            <h2>Contact</h2>
-            <p>Me contacter à travers ce formulaire.</p>
-            <form>
-                <label for="name">Nom:</label>
-                <input type="text" id="name" name="name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" required></textarea>
-                <button type="submit">Envoyer</button>
-            </form>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 Mon Site Web</p>
-    </footer>
-    <script src="script.js"></script>
-</body>
-</html>
+# KhayStore — Boutique en ligne
+
+Site e-commerce moderne et responsive (HTML / CSS / JavaScript, sans dépendance).
+
+## Fonctionnalités
+- Page d'accueil animée (hero, avantages, catégories, offre avec compte à rebours, avis, newsletter)
+- Catalogue avec recherche, filtres par catégorie / promos et tri
+- Aperçu rapide des produits, favoris
+- Panier latéral sauvegardé dans le navigateur, codes promo (`KHAY10`, `BIENVENUE`), barre « livraison offerte »
+- Formulaire de commande (paiement à la livraison, Wave, Orange Money, carte), envoi optionnel de la commande sur WhatsApp
+- Adapté mobile, tablette et ordinateur
+
+## Lancer le site
+Ouvrez simplement `index.html` dans votre navigateur.
+
+## Personnaliser
+Tout se règle en haut de `script.js` :
+- `SETTINGS` : devise, seuil de livraison offerte, frais de port, codes promo, numéro WhatsApp
+- `CATEGORIES` et `PRODUCTS` : votre catalogue
+- Couleurs : variables CSS au début de `styles.css`
+
+## Ajouter les photos des produits
+1. Déposez les photos dans le dossier `images/` (format carré conseillé, ex. 800 × 800 px, en .jpg ou .webp).
+2. Dans `script.js`, ajoutez `img: "images/nom-du-fichier.jpg"` au produit concerné.
+
+Sans photo, ou si le fichier est introuvable, l'émoji du produit s'affiche à la place.
+
+## Mettre en ligne gratuitement
+Sur GitHub : **Settings → Pages → Branch** puis choisissez la branche et le dossier racine.
